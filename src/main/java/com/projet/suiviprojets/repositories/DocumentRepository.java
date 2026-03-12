@@ -1,4 +1,11 @@
 package com.projet.suiviprojets.repositories;
 
-public interface DocumentRepository {
-}
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DocumentRepository extends JpaRepository<Document, Long> {
+    // Retrouver tous les documents techniques attachés à un projet spécifique
+    List<Document> findByProjetId(Long projetId);
+
+    // Rechercher un document par son nom de fichier (pour le téléchargement)
+    Document findByNomFichier(String nomFichier);

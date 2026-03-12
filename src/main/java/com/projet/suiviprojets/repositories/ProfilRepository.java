@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfilRepository extends JpaRepository<Profile, long> {
-    // Permet de trouver un profil par son intitulé
+    // On cherche un profil par son intitulé
     Profil findByLibelle(String libelle);
 }
