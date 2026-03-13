@@ -2,26 +2,20 @@ package com.projet.suiviprojets.repositories;
 
 import com.projet.suiviprojets.entities.Phase;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
-@Repository
 public interface PhaseRepository extends JpaRepository<Phase, Long> {
 
-    // Phases qui sont terminées mais pas encore facturées
-    List<Phase> findByEstTermineeTrueAndEstFactureeFalse();
+    // Phases terminées mais sans facture associée
+    @Query("SELECT p FROM Phase p WHERE p.etat = 'TERMINEE' AND p.facture IS NULL")
+    List<Phase> findTermineesNonFacturees();
 
-    //Facturées mais en attente de paiement
-    List<Phase> findByEstFactureeTrueAndEstPayeeFalse();
+    // Phases facturées mais dont la facture n'est pas payée
+    @Query("SELECT p FROM Phase p WHERE p.facture IS NOT NULL AND p.facture.payee = false")
+    List<Phase> findFactureesNonPayees();
 
-    //Complètement payées
-    List<Phase> findByEstPayeeTrue();
-
-    // Phases liées à un projet précis
-    List<Phase> findByProjet_Id(Long projetId);
-
-
-
+    // Phases payées
+    @Query("SELECT p FROM Phase p WHERE p.facture IS NOT NULL AND p.facture.payee = true")
+    List<Phase> findPayees();
 }
-
