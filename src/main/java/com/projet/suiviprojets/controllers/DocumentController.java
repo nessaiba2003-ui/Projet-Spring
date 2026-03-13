@@ -25,6 +25,6 @@ public class DocumentController {
 
     @DeleteMapping("/documents/{id}")
     public void delete(@PathVariable Long id) {
-        // Logique de suppression à ajouter
+        // cest la logique de suppression à ajouter
     }
 }

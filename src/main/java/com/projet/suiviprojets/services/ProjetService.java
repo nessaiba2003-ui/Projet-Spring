@@ -21,4 +21,16 @@ public class ProjetService {
         }
         return projetRepo.save(p);
     }
+
+    public boolean supprimer(Long id) {
+        return false;
+    }
+
+    public List<Projet> listerTout() {
+        return List.of();
+    }
+
+    public List<Projet> rechercherParTitre(String titre) {
+        return List.of();
+    }
 }
