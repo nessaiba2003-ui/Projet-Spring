@@ -15,7 +15,8 @@ public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String titre;
+    private String code;
+    private String description;
     private String cheminFichier; // Chemin vers le stockage
     private LocalDateTime dateCreation;
 

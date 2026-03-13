@@ -17,7 +17,10 @@ public class Employe {
     private Long id;
     private String matricule;
     private String nom;
+    private String prenom;
     private String email;
+    private String login;
+    private String password;
 
     @ManyToOne
     private Profil profil; // Relation ajoutée ici
