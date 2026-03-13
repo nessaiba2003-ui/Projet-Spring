@@ -1,26 +1,26 @@
 package com.projet.suiviprojets.controllers;
 
-import com.projet.suiviprojets.entities.Organisme;
-import com.projet.suiviprojets.repositories.OrganismeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.projet.suiviprojets.dto.OrganismeRequestDTO;
+import com.projet.suiviprojets.dto.OrganismeResponseDTO;
+import com.projet.suiviprojets.services.OrganismeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/organismes")
+@RequiredArgsConstructor
 public class OrganismeController {
-
-    @Autowired
-    private OrganismeRepository repository;
-
-    @GetMapping
-    public List<Organisme> getAll() {
-        return repository.findAll();
-    }
+    private final OrganismeService service;
 
     @PostMapping
-    public Organisme save(@RequestBody Organisme organisme) {
-        return repository.save(organisme);
+    public OrganismeResponseDTO create(@RequestBody OrganismeRequestDTO dto) {
+        return service.save(dto);
+    }
+
+    @GetMapping
+    public List<OrganismeResponseDTO> getAll() {
+        return service.getAll();
     }
 }
