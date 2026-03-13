@@ -1,29 +1,29 @@
 package com.projet.suiviprojets.entities;
 
+import com.projet.suiviprojets.entities.AffectationId;
+import com.projet.suiviprojets.entities.Employe;
+import com.projet.suiviprojets.entities.Phase;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 public class Affectation {
     @EmbeddedId
-    private AffectationId id = new AffectationId();
+    private AffectationId id;
+
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
+    private String role;
 
     @ManyToOne
     @MapsId("employeId")
-    @JoinColumn(name = "employe_id")
     private Employe employe;
 
-    @ManyToOne @MapsId("phaseId")
-    @JoinColumn(name = "phase_id")
+    @ManyToOne
+    @MapsId("phaseId")
     private Phase phase;
-
-    private LocalDate dateAffectation;
-    private int chargeHoraire; // Optionnel : pour la gestion de projet
 }

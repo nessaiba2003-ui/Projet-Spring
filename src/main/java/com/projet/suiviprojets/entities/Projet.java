@@ -21,6 +21,8 @@ public class Projet {
     @JoinColumn(name = "organisme_id")
     private Organisme organisme;
 
-    @OneToMany(mappedBy = "projet")
+    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
     private List<Phase> phases;
+
+
 }
