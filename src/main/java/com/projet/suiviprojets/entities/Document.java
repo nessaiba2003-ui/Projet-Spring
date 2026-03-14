@@ -21,6 +21,7 @@ public class Document {
     private LocalDateTime dateCreation;
 
     @ManyToOne
+    @JoinColumn(name = "projet_id")
     private Projet projet;
 
     public Long getId() {

@@ -9,51 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class LivrableService {
 
-    @Autowired private LivrableRepository livrableRepository;
-    @Autowired private PhaseRepository phaseRepository;
+    @Autowired
+    private LivrableRepository livrableRepository;
 
+    @Autowired
+    private PhaseRepository phaseRepository;
 
-    // 1. Trouver un livrable par son ID (pour le GET)
-    public LivrableDTO findById(Long id) {
-        Livrable l = livrableRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livrable introuvable avec l'ID : " + id));
-        return mapToDTO(l);
-    }
-
-    // 2. Mettre à jour un livrable (pour le PUT)
-    public LivrableDTO update(Long id, LivrableDTO dto) {
-        Livrable existing = livrableRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livrable introuvable"));
-
-        // On met à jour les champs
-        existing.setCode(dto.getCode());
-        existing.setLibelle(dto.getLibelle());
-        existing.setDescription(dto.getDescription());
-        existing.setChemin(dto.getCheminFichier());
-
-        Livrable updated = livrableRepository.save(existing);
-        return mapToDTO(updated);
-    }
-
-    // Petite méthode utilitaire pour éviter de répéter le code de transformation
-    private LivrableDTO mapToDTO(Livrable l) {
-        LivrableDTO dto = new LivrableDTO();
-        dto.setId(l.getId());
-        dto.setCode(l.getCode());
-        dto.setLibelle(l.getLibelle());
-        dto.setDescription(l.getDescription());
-        dto.setCheminFichier(l.getChemin());
-        return dto;
-    }
-
-
-
-    // Créer un livrable lié à une phase
+    // POST /api/phases/{phaseId}/livrables
     public LivrableDTO save(Long phaseId, LivrableDTO dto) {
         Phase phase = phaseRepository.findById(phaseId)
                 .orElseThrow(() -> new RuntimeException("Phase introuvable"));
@@ -61,8 +29,10 @@ public class LivrableService {
         Livrable livrable = new Livrable();
         livrable.setCode(dto.getCode());
         livrable.setLibelle(dto.getLibelle());
+        livrable.setType(dto.getType());
         livrable.setDescription(dto.getDescription());
-        livrable.setChemin(dto.getCheminFichier());
+        livrable.setChemin(dto.getChemin());
+        livrable.setDateLivraison(dto.getDateLivraison());
         livrable.setPhase(phase);
 
         Livrable saved = livrableRepository.save(livrable);
@@ -70,20 +40,53 @@ public class LivrableService {
         return dto;
     }
 
+    // GET /api/phases/{phaseId}/livrables
     public List<LivrableDTO> findByPhase(Long phaseId) {
-        return livrableRepository.findByPhase_Id(phaseId).stream().map(l -> {
-            LivrableDTO dto = new LivrableDTO();
-            dto.setId(l.getId());
-            dto.setCode(l.getCode());
-            dto.setLibelle(l.getLibelle());
-            dto.setDescription(l.getDescription());
-            dto.setCheminFichier(l.getChemin());
-            return dto;
-        }).collect(Collectors.toList());
+        return livrableRepository.findByPhaseId(phaseId).stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
-    public void delete(Long id) {
-        livrableRepository.deleteById(id);
+    // GET /api/livrables/{id}
+    public LivrableDTO findById(Long id) {
+        return livrableRepository.findById(id).map(this::mapToDTO).orElse(null);
     }
 
+    // PUT /api/livrables/{id}
+    public LivrableDTO update(Long id, LivrableDTO dto) {
+        Livrable existing = livrableRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livrable introuvable"));
+
+        existing.setCode(dto.getCode());
+        existing.setLibelle(dto.getLibelle());
+        existing.setType(dto.getType());
+        existing.setDescription(dto.getDescription());
+        existing.setChemin(dto.getChemin());
+        existing.setDateLivraison(dto.getDateLivraison());
+
+        Livrable updated = livrableRepository.save(existing);
+        return mapToDTO(updated);
+    }
+
+    // DELETE /api/livrables/{id}
+    public boolean delete(Long id) {
+        Optional<Livrable> livrable = livrableRepository.findById(id);
+        if (livrable.isPresent()) {
+            livrableRepository.delete(livrable.get());
+            return true;
+        }
+        return false;
+    }
+
+    // Méthode utilitaire pour transformer l'entité en DTO
+    private LivrableDTO mapToDTO(Livrable l) {
+        LivrableDTO dto = new LivrableDTO();
+        dto.setId(l.getId());
+        dto.setCode(l.getCode());
+        dto.setLibelle(l.getLibelle());
+        dto.setType(l.getType());
+        dto.setDescription(l.getDescription());
+        dto.setChemin(l.getChemin());
+        dto.setDateLivraison(l.getDateLivraison());
+        return dto;
+    }
 }
+

@@ -13,40 +13,46 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Phase 9 : Gestion des Livrables")
+@Tag(name = "Phase 9 : Gestion des Livrables", description = "API pour les livrables associés aux phases")
 public class LivrableController {
 
-    @Autowired private LivrableService livrableService;
+    @Autowired
+    private LivrableService livrableService;
 
-    @Operation(summary = "POST /api/phases/{phaseId}/livrables")
+    @Operation(summary = "Enregistrer un livrable pour une phase")
     @PostMapping("/phases/{phaseId}/livrables")
-    public ResponseEntity<LivrableDTO> create(@PathVariable Long phaseId, @RequestBody LivrableDTO dto) {
-        return new ResponseEntity<>(livrableService.save(phaseId, dto), HttpStatus.CREATED);
+    public ResponseEntity<LivrableDTO> create(@PathVariable Long phaseId, @RequestBody LivrableDTO livrableDTO) {
+        LivrableDTO saved = livrableService.save(phaseId, livrableDTO);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "GET /api/phases/{phaseId}/livrables")
+    @Operation(summary = "Lister les livrables d'une phase")
     @GetMapping("/phases/{phaseId}/livrables")
     public ResponseEntity<List<LivrableDTO>> getByPhase(@PathVariable Long phaseId) {
-        return ResponseEntity.ok(livrableService.findByPhase(phaseId));
+        return new ResponseEntity<>(livrableService.findByPhase(phaseId), HttpStatus.OK);
     }
 
-    @Operation(summary = "DELETE /api/livrables/{id}")
-    @DeleteMapping("/livrables/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        livrableService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "GET /api/livrables/{id}")
+    @Operation(summary = "Obtenir un livrable par son ID")
     @GetMapping("/livrables/{id}")
-    public ResponseEntity<LivrableDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(livrableService.findById(id));
+    public ResponseEntity<LivrableDTO> getById(@PathVariable Long id) {
+        LivrableDTO dto = livrableService.findById(id);
+        return (dto != null) ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "PUT /api/livrables/{id}")
+    @Operation(summary = "Modifier un livrable")
     @PutMapping("/livrables/{id}")
     public ResponseEntity<LivrableDTO> update(@PathVariable Long id, @RequestBody LivrableDTO dto) {
         return ResponseEntity.ok(livrableService.update(id, dto));
     }
+
+    @Operation(summary = "Supprimer un livrable")
+    @DeleteMapping("/livrables/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (livrableService.delete(id)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
+
 
