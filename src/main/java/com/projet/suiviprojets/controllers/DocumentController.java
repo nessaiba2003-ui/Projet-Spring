@@ -34,6 +34,7 @@ import com.projet.suiviprojets.entities.Document;
 import com.projet.suiviprojets.services.DocumentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class DocumentController {
 
     @Operation(summary = "Enregistrer un document technique pour un projet")
     @PostMapping("/projets/{projetId}/documents")
-    public ResponseEntity<Document> save(@PathVariable Long projetId, @RequestBody Document document) {
+    public ResponseEntity<Document> save(@PathVariable Long projetId, @Valid  @RequestBody Document document) {
         Document saved = documentService.save(projetId, document);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
@@ -71,7 +72,7 @@ public class DocumentController {
 
     @Operation(summary = "Modifier les informations d'un document")
     @PutMapping("/documents/{id}")
-    public ResponseEntity<Document> update(@PathVariable Long id, @RequestBody Document document) {
+    public ResponseEntity<Document> update(@PathVariable Long id, @Valid @RequestBody Document document) {
         return ResponseEntity.ok(documentService.update(id, document));
     }
 

@@ -10,5 +10,5 @@ public interface FactureRepository extends JpaRepository<Facture, Long> {
     boolean findByPhaseId(Long phaseId);
 
     // Rechercher les factures par numéro de facture unique
-    Facture findByNumeroFacture(String numero);
+    Facture findByReference(String reference);
 }

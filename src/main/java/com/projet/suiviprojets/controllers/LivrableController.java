@@ -4,6 +4,7 @@ import com.projet.suiviprojets.dto.LivrableDTO;
 import com.projet.suiviprojets.services.LivrableService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class LivrableController {
 
     @Operation(summary = "Enregistrer un livrable pour une phase")
     @PostMapping("/phases/{phaseId}/livrables")
-    public ResponseEntity<LivrableDTO> create(@PathVariable Long phaseId, @RequestBody LivrableDTO livrableDTO) {
+    public ResponseEntity<LivrableDTO> create(@PathVariable Long phaseId, @Valid @RequestBody LivrableDTO livrableDTO) {
         LivrableDTO saved = livrableService.save(phaseId, livrableDTO);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
@@ -41,7 +42,7 @@ public class LivrableController {
 
     @Operation(summary = "Modifier un livrable")
     @PutMapping("/livrables/{id}")
-    public ResponseEntity<LivrableDTO> update(@PathVariable Long id, @RequestBody LivrableDTO dto) {
+    public ResponseEntity<LivrableDTO> update(@PathVariable Long id, @Valid  @RequestBody LivrableDTO dto) {
         return ResponseEntity.ok(livrableService.update(id, dto));
     }
 

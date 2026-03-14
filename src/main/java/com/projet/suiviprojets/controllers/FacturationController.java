@@ -4,6 +4,7 @@ import com.projet.suiviprojets.entities.Facture;
 import com.projet.suiviprojets.services.FacturationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class FacturationController {
 
     @Operation(summary = "Enregistrer une facture pour une phase spécifique")
     @PostMapping("/phases/{phaseId}/facture")
-    public ResponseEntity<Facture> save(@PathVariable Long phaseId, @RequestBody Facture facture) {
+    public ResponseEntity<Facture> save(@PathVariable Long phaseId, @Valid  @RequestBody Facture facture) {
         Facture savedFacture = factureService.save(phaseId, facture);
         return new ResponseEntity<>(savedFacture, HttpStatus.CREATED);
     }
