@@ -23,7 +23,7 @@ public class DocumentService {
                 .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
 
         Document doc = new Document();
-        doc.setTitre(dto.getTitre());
+        doc.setCode(dto.getCode());
         doc.setCheminFichier(dto.getCheminFichier());
         doc.setProjet(projet);
         doc.setDateCreation(LocalDateTime.now());
@@ -40,7 +40,7 @@ public class DocumentService {
     private DocumentDTO mapToDTO(Document doc) {
         DocumentDTO dto = new DocumentDTO();
         dto.setId(doc.getId());
-        dto.setTitre(doc.getTitre());
+        dto.setCode(doc.getCode());
         dto.setCheminFichier(doc.getCheminFichier());
         dto.setDateCreation(doc.getDateCreation());
         dto.setProjetId(doc.getProjet().getId());
