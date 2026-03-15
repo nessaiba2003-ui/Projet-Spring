@@ -12,4 +12,5 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByProjetId(Long projetId);
 
     // Rechercher un document par son nom de fichier (pour le téléchargement)
-    Document findByNomFichier(String nomFichier);}
+    List<Document> findByCode(Long code);
+}

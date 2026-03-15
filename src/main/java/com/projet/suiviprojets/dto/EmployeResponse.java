@@ -1,7 +1,6 @@
 package com.projet.suiviprojets.dto;
 
 import lombok.Data;
-import org.springframework.context.annotation.Profile;
 
 @Data
 public class EmployeResponse {
@@ -10,13 +9,7 @@ public class EmployeResponse {
     private String nom;
     private String prenom;
     private String email;
-    private String profilLibelle;
-
-
-    public void setProfilLibelle(Class<? extends Profile> libelle) {
-    }
-
-    public void setProfilLibelle(String libelle) {
-    }
+    private String profilLibelle; // Pour afficher le nom du profil (ex: Administrateur)
 }
+
 

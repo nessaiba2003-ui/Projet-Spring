@@ -10,5 +10,5 @@ import java.util.List;
 public interface LivrableRepository extends JpaRepository<Livrable, Long> {
 
     // Chercher les livrables d'une phase précise
-    List<Livrable> findByPhase_Id(Long phaseId);
+    List<Livrable> findByPhaseId(Long phaseId);
 }

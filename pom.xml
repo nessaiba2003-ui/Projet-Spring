@@ -64,6 +64,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -109,6 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                             <version>3.11.0</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
@@ -120,7 +122,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin Asciidoctor (C'est ICI que l'erreur se trouve) -->
+            <!-- Plugin Asciidoctor -->
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
@@ -148,6 +150,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>

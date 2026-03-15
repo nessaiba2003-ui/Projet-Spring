@@ -16,8 +16,8 @@ public class Profil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String libelle;
-    private String code;// ex: ADMIN, COMPTABLE, CHEF_PROJET
+    private String libelle;// ex: ADMIN, COMPTABLE, CHEF_PROJET
+    private String code;
 
     @OneToMany(mappedBy = "profil")
     private List<Employe> employes;
