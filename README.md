@@ -44,7 +44,7 @@ Pour ce projet, nous avons implémenté une couche de sécurité moderne basée 
 Démonstration de la structure du projet sous Java 21 avec Maven.
 
 - Packages organisés, configuration du pom.xml et classe Main
-"![Image](https://github.com/user-attachments/assets/41113cc7-b24b-4451-8c72-ec0ad1b496d6)" alt="Structure IntelliJ" width="850">
+![Image](https://github.com/user-attachments/assets/41113cc7-b24b-4451-8c72-ec0ad1b496d6)
 
 ### 📄 2. Documentation Interactive avec Swagger
 Le projet expose une documentation vivante accessible via OpenAPI.
