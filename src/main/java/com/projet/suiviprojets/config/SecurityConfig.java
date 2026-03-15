@@ -15,16 +15,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**").permitAll() // Login public
-                .requestMatchers("/api/organismes/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http
+                // 1. Désactiver le CSRF (Obligatoire pour tes tests de formulaire)
+                .csrf(csrf -> csrf.disable())
+
+                // 2. Configuration des accès
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/inscription/**", "/api/auth/**", "/css/**", "/js/**").permitAll() // Public
+                        .requestMatchers("/api/organismes/**", "/admin/**").hasRole("ADMIN") // Admin seulement
+                        .anyRequest().authenticated() // Tout le reste demande une connexion
+                )
+
+                // 3. Gestion de la session (Stateless pour les API ou Stateful pour Thymeleaf)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Recommandé pour Thymeleaf/Login
+                )
+
+                // 4. Activer le formulaire de connexion par défaut
+                .formLogin(form -> form.defaultSuccessUrl("/inscription", true));
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

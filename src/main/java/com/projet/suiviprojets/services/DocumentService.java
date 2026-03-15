@@ -40,7 +40,7 @@ public class DocumentService {
     private DocumentDTO mapToDTO(Document doc) {
         DocumentDTO dto = new DocumentDTO();
         dto.setId(doc.getId());
-        dto.setTitre(doc.getTitre());
+        dto.setTitre(doc.setTitre());
         dto.setCheminFichier(doc.getCheminFichier());
         dto.setDateCreation(doc.getDateCreation());
         dto.setProjetId(doc.getProjet().getId());

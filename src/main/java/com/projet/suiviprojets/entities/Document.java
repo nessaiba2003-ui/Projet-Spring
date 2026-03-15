@@ -22,4 +22,11 @@ public class Document {
 
     @ManyToOne
     private Projet projet;
+
+    public void setTitre(String titre) {
+    }
+
+    public String setTitre() {
+        return "";
+    }
 }

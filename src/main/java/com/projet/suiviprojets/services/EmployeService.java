@@ -7,6 +7,7 @@ import com.projet.suiviprojets.entities.Profil;
 import com.projet.suiviprojets.repositories.EmployeRepository;
 import com.projet.suiviprojets.repositories.ProfilRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class EmployeService {
 
     // Méthode pour enregistrer
     public EmployeResponse save(EmployeRequest request) {
-        Profil profil = profilRepository.findById(request.getProfilId()).orElseThrow();
+        Profile profil = profilRepository.findById(request.getProfilId()).orElseThrow();
 
         Employe e = new Employe();
         e.setMatricule(request.getMatricule());
@@ -30,7 +31,7 @@ public class EmployeService {
         e.setEmail(request.getEmail());
         e.setLogin(request.getLogin());
         e.setPassword(request.getPassword());
-        e.setProfil(profil);
+        e.setProfil((Profil) profil);
 
         Employe saved = employeRepository.save(e);
 
@@ -38,7 +39,7 @@ public class EmployeService {
         EmployeResponse res = new EmployeResponse();
         res.setId(saved.getId());
         res.setNom(saved.getNom());
-        res.setProfilLibelle(profil.getLibelle());
+        res.setProfilLibelle(profil.getClass());
         return res;
     }
 
