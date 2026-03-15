@@ -1,5 +1,7 @@
 package com.projet.suiviprojets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.projet.suiviprojets.entities.Organisme;
 import com.projet.suiviprojets.entities.Phase;
 import jakarta.persistence.*;
@@ -23,6 +25,7 @@ public class Projet {
     private Organisme organisme;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Phase> phases;
 
     //ajoutée
@@ -33,84 +36,5 @@ public class Projet {
     @JoinColumn(name = "chef_projet_id")
     private Employe chefProjet;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDate getDateDebut() {
-        return dateDebut;
-    }
-
-    public void setDateDebut(LocalDate dateDebut) {
-        this.dateDebut = dateDebut;
-    }
-
-    public LocalDate getDateFin() {
-        return dateFin;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Employe getChefProjet() {
-        return chefProjet;
-    }
-
-    public void setChefProjet(Employe chefProjet) {
-        this.chefProjet = chefProjet;
-    }
-
-    public void setDateFin(LocalDate dateFin) {
-        this.dateFin = dateFin;
-    }
-
-    public Double getMontantGlobal() {
-        return montantGlobal;
-    }
-
-    public void setMontantGlobal(Double montantGlobal) {
-        this.montantGlobal = montantGlobal;
-    }
-
-    public Organisme getOrganisme() {
-        return organisme;
-    }
-
-    public void setOrganisme(Organisme organisme) {
-        this.organisme = organisme;
-    }
-
-    public List<Phase> getPhases() {
-        return phases;
-    }
-
-    public void setPhases(List<Phase> phases) {
-        this.phases = phases;
-    }
 }
 

@@ -3,6 +3,7 @@ package com.projet.suiviprojets.services;
 import com.projet.suiviprojets.dto.LivrableDTO;
 import com.projet.suiviprojets.entities.Livrable;
 import com.projet.suiviprojets.entities.Phase;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.LivrableRepository;
 import com.projet.suiviprojets.repositories.PhaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class LivrableService {
     // POST /api/phases/{phaseId}/livrables
     public LivrableDTO save(Long phaseId, LivrableDTO dto) {
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Phase introuvable"));
 
         Livrable livrable = new Livrable();
         livrable.setCode(dto.getCode());
@@ -53,7 +54,7 @@ public class LivrableService {
     // PUT /api/livrables/{id}
     public LivrableDTO update(Long id, LivrableDTO dto) {
         Livrable existing = livrableRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livrable introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Livrable introuvable"));
 
         existing.setCode(dto.getCode());
         existing.setLibelle(dto.getLibelle());

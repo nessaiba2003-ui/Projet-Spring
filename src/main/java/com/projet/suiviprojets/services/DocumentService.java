@@ -52,6 +52,7 @@ package com.projet.suiviprojets.services;
 
 import com.projet.suiviprojets.entities.Document;
 import com.projet.suiviprojets.entities.Projet;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.DocumentRepository;
 import com.projet.suiviprojets.repositories.ProjetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class DocumentService {
     // POST /api/projets/{projetId}/documents
     public Document save(Long projetId, Document document) {
         Projet projet = projetRepository.findById(projetId)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Projet introuvable"));
 
         document.setProjet(projet);
         document.setDateCreation(LocalDateTime.now()); // On fixe la date à l'enregistrement
@@ -93,7 +94,7 @@ public class DocumentService {
     // PUT /api/documents/{id}
     public Document update(Long id, Document details) {
         Document doc = documentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Document introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Document introuvable"));
 
         doc.setCode(details.getCode());
         doc.setDescription(details.getDescription());

@@ -38,6 +38,7 @@ public class ProjetService {
 
 import com.projet.suiviprojets.dto.ProjetDTO;
 import com.projet.suiviprojets.entities.Projet;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.EmployeRepository;
 import com.projet.suiviprojets.repositories.OrganismeRepository;
 import com.projet.suiviprojets.repositories.ProjetRepository;
@@ -56,11 +57,11 @@ public class ProjetService {
     public Projet save(ProjetDTO dto) {
         // RÈGLE 1 : dateDebut <= dateFin
         if (dto.getDateDebut().isAfter(dto.getDateFin())) {
-            throw new RuntimeException("La date de début doit être avant la date de fin !");
+            throw new ProjectBusinessException("La date de début doit être avant la date de fin !");
         }
         // RÈGLE 4 : code projet unique
         if (projetRepository.existsByCode(dto.getCode())) {
-            throw new RuntimeException("Ce code projet existe déjà !");
+            throw new ProjectBusinessException("Ce code projet existe déjà !");
         }
 
         Projet p = new Projet();
@@ -93,7 +94,7 @@ public class ProjetService {
     public boolean delete(Long id) {
         Projet p = projetRepository.findById(id).orElseThrow();
         if (p.getPhases() != null && !p.getPhases().isEmpty()) {
-            throw new RuntimeException("Impossible de supprimer : ce projet a déjà des phases !");
+            throw new ProjectBusinessException("Impossible de supprimer : ce projet a déjà des phases !");
         }
         projetRepository.delete(p);
         return true;

@@ -1,5 +1,6 @@
 package com.projet.suiviprojets.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projet.suiviprojets.entities.AffectationId;
 import com.projet.suiviprojets.entities.Employe;
 import com.projet.suiviprojets.entities.Phase;
@@ -21,9 +22,11 @@ public class Affectation {
 
     @ManyToOne
     @MapsId("employeId")
+    @JsonIgnore
     private Employe employe;
 
     @ManyToOne
     @MapsId("phaseId")
+    @JsonIgnore
     private Phase phase;
 }

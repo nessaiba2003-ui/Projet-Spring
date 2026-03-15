@@ -4,6 +4,7 @@ package com.projet.suiviprojets.services;
 import com.projet.suiviprojets.dto.EmployeRequest;
 import com.projet.suiviprojets.entities.Employe;
 import com.projet.suiviprojets.entities.Profil;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.EmployeRepository;
 import com.projet.suiviprojets.repositories.ProfilRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,7 @@ public class EmployeService {
     // Pour le PUT /{id}
     public Employe update(Long id, EmployeRequest dto) {
         Employe existing = employeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employé introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Employé introuvable"));
 
         // Mise à jour des champs
         existing.setNom(dto.getNom());
@@ -119,7 +120,7 @@ public class EmployeService {
 
         // Mise à jour du profil si nécessaire
         com.projet.suiviprojets.entities.Profil newProfil = (Profil) profilRepository.findById(dto.getProfilId())
-                .orElseThrow(() -> new RuntimeException("Profil introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Profil introuvable"));
         existing.setProfil(newProfil);
 
         return employeRepository.save(existing);
