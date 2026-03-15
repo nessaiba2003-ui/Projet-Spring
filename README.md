@@ -42,10 +42,9 @@ Pour ce projet, nous avons implémenté une couche de sécurité moderne basée 
 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
 Démonstration de la structure du projet sous Java 21 avec Maven.
-<p align="center">
-  <img src= "![img.png](img.png)" alt="Structure IntelliJ" width="850">
-  <br><em>Packages organisés, configuration du pom.xml et classe Main.</em>
-</p>
+
+- Packages organisés, configuration du pom.xml et classe Main
+"![Image](https://github.com/user-attachments/assets/41113cc7-b24b-4451-8c72-ec0ad1b496d6)" alt="Structure IntelliJ" width="850">
 
 ### 📄 2. Documentation Interactive avec Swagger
 Le projet expose une documentation vivante accessible via OpenAPI.
