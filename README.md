@@ -108,5 +108,5 @@ Le projet respecte rigoureusement les diagrammes UML élaborés en amont (Packag
 *   **Hafsa Belahnech & Nessaiba Messaadiyene** 
 
 
-
+![Image](https://github.com/user-attachments/assets/1e9826a7-3f4e-481a-9d82-213b50cd5525)
 
