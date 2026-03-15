@@ -15,7 +15,6 @@ public class ProjetService {
     public List<Projet> trouverTous() { return projetRepo.findAll(); }
 
     public Projet enregistrer(Projet p) {
-        // Logique : vérifier que la date de fin est après la date de début
         if(p.getDateFin().isBefore(p.getDateDebut())) {
             throw new RuntimeException("Date de fin invalide");
         }
@@ -32,9 +31,7 @@ public class ProjetService {
 
     public List<Projet> rechercherParTitre(String titre) {
         return List.of();
-    }
-}
-*/
+    }}*/
 
 import com.projet.suiviprojets.dto.ProjetDTO;
 import com.projet.suiviprojets.entities.Projet;

@@ -26,8 +26,8 @@ public class Employe {
     private String password;
 
     @ManyToOne
-    @JsonIgnore //c'est pour une structure propre
-    private Profil profil; // Relation ajoutée ici
+    @JsonIgnore //c'est pour une structure propre sans boucle
+    private Profil profil;
 
     @OneToMany(mappedBy = "employe")
     @JsonIgnore

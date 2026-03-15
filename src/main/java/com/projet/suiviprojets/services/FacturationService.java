@@ -59,7 +59,7 @@ public class FacturationService {
         return factureRepository.save(facture);
     }
 
-    // Supprimer une facture (Modèle exact de StudentService)
+    // Supprimer une facture
     public boolean delete(Long id) {
         Optional<Facture> factureOptional = factureRepository.findById(id);
         if (factureOptional.isPresent()) {

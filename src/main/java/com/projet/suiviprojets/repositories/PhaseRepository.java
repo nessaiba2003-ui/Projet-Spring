@@ -29,15 +29,15 @@ public interface PhaseRepository extends JpaRepository<Phase, Long> {
 
 
 
-    // 1. Phases payées (utilise le champ etatPaiement de l'UML)
+    //Phases payées
     @Query("SELECT p FROM Phase p WHERE p.etatPaiement = true")
     List<Phase> findPayees();
 
-    // 2. Phases terminées mais non encore facturées
+    // Phases terminées mais non encore facturées
     @Query("SELECT p FROM Phase p WHERE p.etatRealisation = true AND p.etatFacturation = false")
     List<Phase> findTermineesNonFacturees();
 
-    // 3. Phases facturées mais non payées
+    // Phases facturées mais non payées
     @Query("SELECT p FROM Phase p WHERE p.etatFacturation = true AND p.etatPaiement = false")
     List<Phase> findFactureesNonPayees();
 

@@ -29,7 +29,7 @@ public class ReportingController {
     public Map<String, Object> getStats() {
         return reportingService.getStatsTableauDeBord();
     }
-}*/
+} Code commenté pour le test des erreurs*/
 
 import com.projet.suiviprojets.entities.Phase;
 import com.projet.suiviprojets.entities.Projet;

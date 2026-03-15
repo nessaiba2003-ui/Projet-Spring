@@ -9,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Entity
-@Data // Requires Lombok dependency
+@Data // pour Lombok dependency
 public class Organisme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

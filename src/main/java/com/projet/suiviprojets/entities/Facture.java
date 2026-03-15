@@ -21,7 +21,7 @@ public class Facture {
     private LocalDate dateFacture;
     private boolean payee; // Pour l'état du paiement
 
-    @OneToOne // Une facture par phase (ou selon votre logique métier)
+    @OneToOne // Une facture par phase
     @JsonIgnore
     private Phase phase;
 

@@ -29,4 +29,6 @@ public class Affectation {
     @MapsId("phaseId")
     @JsonIgnore
     private Phase phase;
+
+    //pas de getters & setters écris à la main, pour ne pas contradire lombok
 }
