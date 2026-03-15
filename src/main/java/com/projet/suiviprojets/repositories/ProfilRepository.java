@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfilRepository extends JpaRepository<Profil, Long> {
-    // On cherche un profil par son intitulé
+    // On cherche un profil par son intitulé/libelle ici
     Profil findByLibelle(String libelle);
 }

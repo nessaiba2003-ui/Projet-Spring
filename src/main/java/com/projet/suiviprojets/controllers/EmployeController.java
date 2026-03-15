@@ -22,9 +22,9 @@ public class EmployeController {
     @Autowired
     private EmployeService employeService;
 
-    @PostMapping
+    @PostMapping("/save")
     @Operation(summary = "POST /api/employes")
-    public ResponseEntity<Employe> create(@Valid @RequestBody EmployeRequest dto) {
+    public ResponseEntity<Employe> save(@Valid @RequestBody EmployeRequest dto) {
         return new ResponseEntity<>(employeService.save(dto), HttpStatus.CREATED);
     }
 

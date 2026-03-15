@@ -9,7 +9,7 @@ public class EmployeResponse {
     private String nom;
     private String prenom;
     private String email;
-    private String profilLibelle; // Pour afficher le nom du profil (ex: Administrateur)
+    private String profilLibelle; // Pour afficher le nom du profil (ex: Administrateur, Secrétaire, etc...)
 }
 
 

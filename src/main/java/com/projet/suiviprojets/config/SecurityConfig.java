@@ -1,98 +1,71 @@
-/*package com.projet.suiviprojets.config;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // 1. Désactiver le CSRF (Obligatoire pour tes tests de formulaire)
-                .csrf(csrf -> csrf.disable())
-
-                // 2. Configuration des accès
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/inscription/**", "/api/auth/**", "/css/**", "/js/**").permitAll() // Public
-                        .requestMatchers("/api/organismes/**", "/admin/**").hasRole("ADMIN") // Admin seulement
-                        .anyRequest().authenticated() // Tout le reste demande une connexion
-                )
-
-                // 3. Gestion de la session (Stateless pour les API ou Stateful pour Thymeleaf)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Recommandé pour Thymeleaf/Login
-                )
-
-                // 4. Activer le formulaire de connexion par défaut
-                .formLogin(form -> form.defaultSuccessUrl("/inscription", true));
-
-        return http.build();
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-}*/
-
 package com.projet.suiviprojets.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import com.projet.suiviprojets.security.JwtAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+
+
+
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
-
+    @Autowired
+    private JwtAuthenticationFilter jwtFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                // 1. Désactiver le CSRF (nécessaire pour les APIs REST)
-                .csrf(AbstractHttpConfigurer::disable)
-
-                // 2. Gérer les autorisations
-                /*.authorizeHttpRequests(auth -> auth
-                        // On autorise Swagger pour pouvoir tester les APIs
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // On autorise l'authentification
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // On protège le reste (demande un login)
-                        .anyRequest().authenticated()
-                )*/
-                // 2. Gérer les autorisations
+        http.csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // On autorise TOUT le monde temporairement pour Postman
-                        .anyRequest().permitAll()
-                )
+                        //  Accès public (Login, Swagger et Erreurs)
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
 
+                        // Restrictions par Rôles
+                        // Seul l'ADMINISTRATEUR peut gérer les employés et profils
+                        .requestMatchers("/api/employes/**", "/api/profils/**").hasAuthority("ROLE_ADMINISTRATEUR")
 
-                // 3. Mode Stateless (Pas de session côté serveur car on utilise JWT)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        // La SECRÉTAIRE et l'ADMIN gèrent les projets et organismes
+                        .requestMatchers("/api/organismes/**", "/api/projets/**").hasAnyAuthority("ROLE_ADMINISTRATEUR", "ROLE_SECRETAIRE")
+
+                        //à la fois le Chef de Projet ET le Comptable pour les phases
+                        .requestMatchers("/api/phases/**").hasAnyAuthority("ROLE_CHEF_DE_PROJET", "ROLE_COMPTABLE")
+
+                        // Le CHEF DE PROJET les affectations et livrables
+                        .requestMatchers("/api/affectations/**", "/api/livrables/**").hasAuthority("ROLE_CHEF_DE_PROJET")
+
+                        // Le COMPTABLE gère les factures
+                        .requestMatchers("/api/factures/**").hasAuthority("ROLE_COMPTABLE")
+
+                        // Le DIRECTEUR voit le reporting
+                        .requestMatchers("/api/reporting/**").hasAuthority("ROLE_DIRECTEUR")
+
+                        // Tout le reste demande d'être au moins connecté
+                        .anyRequest().authenticated()
                 );
 
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Pour crypter les mots de passe des employés
         return new BCryptPasswordEncoder();
+    }
+
+   @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 }

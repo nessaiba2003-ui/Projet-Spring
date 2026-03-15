@@ -4,6 +4,7 @@ import com.projet.suiviprojets.dto.AffectationDTO;
 import com.projet.suiviprojets.entities.Affectation;
 import com.projet.suiviprojets.entities.AffectationId;
 import com.projet.suiviprojets.entities.Phase;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.AffectationRepository;
 import com.projet.suiviprojets.repositories.EmployeRepository;
 import com.projet.suiviprojets.repositories.PhaseRepository;
@@ -24,19 +25,19 @@ public class AffectationService {
 
         // RÈGLE 1 : Pas de doublon (déjà géré par la clé primaire, mais on vérifie)
         if (affectationRepository.existsById(id)) {
-            throw new RuntimeException("Cet employé est déjà affecté à cette phase !");
+            throw new ProjectBusinessException("Cet employé est déjà affecté à cette phase !");
         }
 
         Phase phase = phaseRepository.findById(phaseId).orElseThrow();
 
         // RÈGLE 2 & 4 : Cohérence des dates (Incluses dans la phase)
         if (dto.getDateDebut().isBefore(phase.getDateDebut()) || dto.getDateFin().isAfter(phase.getDateFin())) {
-            throw new RuntimeException("Les dates d'affectation doivent être comprises dans celles de la phase !");
+            throw new ProjectBusinessException("Les dates d'affectation doivent être comprises dans celles de la phase !");
         }
 
         // RÈGLE 3 : Employé disponible (pas d'autre mission en même temps)
         if (affectationRepository.isEmployeOccupe(employeId, dto.getDateDebut(), dto.getDateFin())) {
-            throw new RuntimeException("L'employé est déjà occupé sur une autre phase durant cette période !");
+            throw new ProjectBusinessException("L'employé est déjà occupé sur une autre phase durant cette période !");
         }
 
         Affectation aff = new Affectation();

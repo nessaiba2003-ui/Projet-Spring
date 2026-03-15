@@ -33,10 +33,7 @@ public class OrganismeService {
         return repository.findAll().stream()
                 .map(o -> new OrganismeResponseDTO(o.getId(), o.getNom(), o.getCode(), null))
                 .collect(Collectors.toList());
-    }
-
-    // Ajoutez delete, update et getById ici...
-}*/
+    }}*/
 
 
 @Service

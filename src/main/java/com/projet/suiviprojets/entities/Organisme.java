@@ -1,5 +1,7 @@
 package com.projet.suiviprojets.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projet.suiviprojets.entities.Projet;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,7 +9,7 @@ import lombok.Data;
 import java.util.List;
 
 @Entity
-@Data // Requires Lombok dependency
+@Data // pour Lombok dependency
 public class Organisme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +21,6 @@ public class Organisme {
     private String adresse;
 
     @OneToMany(mappedBy = "organisme")
+    @JsonIgnore
     private List<Projet> projets;
 }

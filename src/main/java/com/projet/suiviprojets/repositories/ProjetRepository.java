@@ -12,14 +12,13 @@ import java.util.List;
 public interface ProjetRepository extends JpaRepository<Projet, Long> {
 
     // Recherche par code unique (pour la validation)
-    // On utilise "code" car c'est le nom standard dans le diag de classe
     boolean existsByCode(String code);
     Projet findByCode(String code);
 
     // Recherche par Chef de Projet (Responsable)
     List<Projet> findByChefProjet(Employe chefProjet);
 
-    // 3. Recherche par nom (équivalent du titre)
+    // Recherche par nom
     List<Projet> findByNomContainingIgnoreCase(String nom);
 
 

@@ -28,7 +28,6 @@ public class ReportingService {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalProjets", projetRepo.count());
         stats.put("phasesEnAttentePaiement", phaseRepo.findFactureesNonPayees().size());
-        // Vous pouvez ajouter d'autres calculs ici
         return stats;
     }
 }*/

@@ -2,6 +2,7 @@ package com.projet.suiviprojets.services;
 
 import com.projet.suiviprojets.entities.Facture;
 import com.projet.suiviprojets.entities.Phase;
+import com.projet.suiviprojets.exceptions.ProjectBusinessException;
 import com.projet.suiviprojets.repositories.FactureRepository;
 import com.projet.suiviprojets.repositories.PhaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +35,16 @@ public class FacturationService {
     public Facture save(Long phaseId, Facture facture) {
         // 1. Récupérer la phase
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase introuvable"));
+                .orElseThrow(() -> new ProjectBusinessException("Phase introuvable"));
 
         // RÈGLE 1 : La phase doit être terminée (clôturée)
         if (!phase.getEtatRealisation()) {
-            throw new RuntimeException("Erreur : Impossible de facturer une phase non terminée !");
+            throw new ProjectBusinessException("Erreur : Impossible de facturer une phase non terminée !");
         }
 
         // RÈGLE 2 : Pas de double facturation
         if (phase.getEtatFacturation()) {
-            throw new RuntimeException("Erreur : Cette phase est déjà facturée !");
+            throw new ProjectBusinessException("Erreur : Cette phase est déjà facturée !");
         }
 
         // 2. Préparation de la facture
@@ -58,7 +59,7 @@ public class FacturationService {
         return factureRepository.save(facture);
     }
 
-    // Supprimer une facture (Modèle exact de StudentService)
+    // Supprimer une facture
     public boolean delete(Long id) {
         Optional<Facture> factureOptional = factureRepository.findById(id);
         if (factureOptional.isPresent()) {

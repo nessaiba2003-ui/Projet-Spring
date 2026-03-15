@@ -16,7 +16,7 @@ public interface AffectationRepository extends JpaRepository<Affectation, Affect
     List<Affectation> findByPhaseId(Long phaseId);
     List<Affectation> findByEmployeId(Long employeId);
 
-    // RÈGLE : Vérifier si l'employé est déjà occupé sur cette période (chevauchement de dates)
+    // Vérifier si l'employé est déjà occupé sur cette période (chevauchement de dates)
     @Query("SELECT COUNT(a) > 0 FROM Affectation a WHERE a.employe.id = :empId " +
             "AND (:debut <= a.dateFin AND :fin >= a.dateDebut)")
     boolean isEmployeOccupe(@Param("empId") Long empId, @Param("debut") LocalDate debut, @Param("fin") LocalDate fin);

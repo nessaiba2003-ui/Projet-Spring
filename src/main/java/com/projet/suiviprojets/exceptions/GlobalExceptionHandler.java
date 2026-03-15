@@ -12,7 +12,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Attrape vos erreurs personnalisées (ex: "Date invalide")
+    // Les erreurs personnalisées (ex: "Date invalide")
     @ExceptionHandler(ProjectBusinessException.class)
     public ResponseEntity<Map<String, String>> handleBusinessException(ProjectBusinessException ex) {
         Map<String, String> error = new HashMap<>();
@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // 2. Attrape les erreurs de validation (ex: "@NotBlank" oublié)
+    // Les erreurs de validation (ex: "@NotBlank" oublié)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
