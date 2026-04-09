@@ -5,22 +5,82 @@
 
 ---
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prometheus_%2B_Grafana-E65C8A?style=for-the-badge&logo=prometheus&logoColor=white" />
+</p>
+
+---
+
 ## 📌 Présentation du Projet
 Ce projet a été conçu pour répondre aux besoins réels d'une organisation gérant plusieurs projets simultanés. L'objectif est de digitaliser le cycle de vie complet d'un projet : de la collaboration avec un **Organisme** partenaire jusqu'au calcul automatisé de la **Facturation** par phase.
 
-### ✨ Fonctionnalités Majeures
-*   **Gestion Multicritères** : Administration complète des Organismes, Projets et Employés.
-*   **Découpage Opérationnel** : Structuration des projets en **Phases** (Analyse, Développement, Test) avec gestion des livrables associés.
-*   **Suivi des Affectations** : Gestion dynamique des employés sur chaque phase avec suivi des dates de début et de fin (Clés composées JPA).
-*   **Moteur de Facturation** : Calcul automatique des montants basés sur l'achèvement des livrables par phase.
-*   **Sécurité Granulaire** : Système d'accès restreint selon le rôle (Directeur, Chef de projet, Comptable, Secrétaire, Administrateur).
+--- 
+
+## ✨ Fonctionnalités Majeures
+
+| Module | Fonctionnalités |
+|--------|----------------|
+| 🏢 **Organismes** | CRUD complet, recherche multicritère (nom, code, contact), validation stricte |
+| 👥 **Employés** | Gestion profils, unicité (matricule/login/email), écran disponibilité périodique |
+| 📁 **Projets** | Création avec organisme/chef projet, contrôle dates, état dynamique, résumé projet |
+| 🔄 **Phases** | Découpage temporel, suivi % réalisation/montant, règles métier (somme ≤ projet) |
+| 🔗 **Affectations** | Clé composée (`@EmbeddedId`), contrôle disponibilité, historique par employé |
+| 📦 **Livrables** | Liaison phase, upload fichiers, suivi statut, traçabilité |
+| 📄 **Documents** | Métadonnées, aperçu, téléchargement sécurisé, gestion versions |
+| 💰 **Factures** | Génération depuis phase terminée, statuts (facturé/payé), cohérence comptable |
+| 📊 **Reporting** | KPIs, phases non facturées, projets en cours/clôturés, filtres dynamiques |
+| 🔐 **Sécurité** | JWT stateless, rôles hiérarchisés, routes protégées, menu dynamique par profil |
+
+
 
 ---
 
 ## 🏗️ Architecture du Projet
 L'application suit une **Architecture en Couches** standard, garantissant une séparation claire des responsabilités, facilitant la maintenance et les tests :
 
-*.  **Couche API (Controllers)** : Points d'entrée de l'application. Reçoivent les requêtes JSON, gèrent les codes de retour HTTP (200, 201, 403, etc.) et communiquent avec la couche Service.
+┌─────────────────────────────────────────────┐  
+│ 🌐 Frontend (React 18 + Vite + Tailwind) │   
+│ • Axios + Interceptors JWT │  
+│ • React Router + PrivateRoute/RoleRoute │  
+│ • Context API / Redux + React Hook Form │   
+└──────────────┬──────────────────────────────┘  
+│ HTTPS / JSON      
+▼    
+┌─────────────────────────────────────────────┐    
+│ 🔐 API Gateway - Spring Boot 3.2 (Java 21) │   
+│ • Spring Security 6 + JWT Filter │    
+│ • @RestController + DTO Pattern │   
+│ • @ControllerAdvice + @Valid │   
+└──────────────┬──────────────────────────────┘   
+│ Couche Service (@Transactional)     
+▼   
+┌─────────────────────────────────────────────┐  
+│ ⚙️ Business Logic & Validation │  
+│ • Règles métier & calculs facturation │  
+│ • MapStruct (Entity ↔ DTO) │  
+│ • Exceptions métier personnalisées │  
+└──────────────┬──────────────────────────────┘  
+│ Spring Data JPA  
+▼  
+┌─────────────────────────────────────────────┐   
+│ 🗄️ Data Access Layer │  
+│ • Repositories JPA + requêtes métier │  
+│ • Relations @OneToMany/@ManyToMany │  
+│ • Clé composée @Embeddable + @EmbeddedId │  
+└──────────────┬──────────────────────────────┘  
+▼  
+┌─────────────────────────────────────────────┐  
+│ 🗃️ MySQL 8.0 + Docker Compose │  
+│ • Prometheus + Grafana (Monitoring) │  
+└─────────────────────────────────────────────┘  
+
+
+*   **Couche API (Controllers)** : Points d'entrée de l'application. Reçoivent les requêtes JSON, gèrent les codes de retour HTTP (200, 201, 403, etc.) et communiquent avec la couche Service.
 *   **Couche Service (Business Logic)** : Contient toute la logique métier, les calculs de facturation et les règles de gestion.
 *   **Couche Data Access (Repositories)** : Interface avec la base de données via Spring Data JPA.
 *   **Couche Modèle (Entities)** : Représentation des tables de la base de données (Organisme, Projet, Phase, Employé, etc.).
