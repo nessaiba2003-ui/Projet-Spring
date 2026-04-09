@@ -144,13 +144,42 @@ Preuve du fonctionnement des filtres de sécurité.
 Voici un aperçu des points d'entrée développés et testés sous Postman :
 
 
-| Méthode | Endpoint | Description | Accès Autorisé |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Authentification et génération du JWT | Public |
-| `GET` | `/api/projets` | Liste tous les projets en cours | Tous les rôles |
-| `POST` | `/api/projets` | Création d'un nouveau projet | Chef de projet / Admin |
-| `GET` | `/api/factures/{id}` | Générer la facture détaillée d'une phase | Comptable / Directeur |
-| `PUT` | `/api/affectations` | Assigner un employé à une phase spécifique | Admin |
+
+### 👥 Matrice des Rôles & Permissions
+| Rôle | Accès Autorisés | Restrictions |
+|------|-----------|----------|
+| 👑 **Administrateur** |Tous les modules, gestion employés/utilisateurs | Aucun | 
+| 📋 **Secrétaire** | Organismes, projets, consultation générale | Pas de facturation, pas de suppression critique | 
+| 🎯 **Directeur** |Dashboard, reporting, suivi global, validation stratégique | Pas de modification technique directe |
+| 👨‍💻 **Chef Projet** | Phases, affectations, livrables, documents de ses projets | Uniquement projets assignés |
+| 💼 **Comptable** | Factures, paiements, reporting financier | Lecture seule sur autres modules |
+
+> 🔒 **Principe de défense en profondeur** : Le frontend masque les actions non autorisées, mais Spring Security reste la seule source de vérité pour les autorisations réelles.
+
+---
+
+## 📡 API & Endpoints (OpenAPI/Swagger)
+
+| Méthode | Endpoint | Description | Accès |
+|---------|----------|-------------|-------|
+| `POST` | `/api/auth/login` | Authentification & génération JWT | 🔓 Public |
+| `GET` | `/api/auth/me` | Profil utilisateur connecté | 🔐 Auth |
+| `POST` | `/api/auth/change-password` | Modification mot de passe | 🔐 Auth |
+| `GET` | `/api/organismes` | Liste organismes (paginée + filtres) | Secrétaire+ |
+| `POST` | `/api/projets` | Création projet + validation dates | Chef/Admin |
+| `GET` | `/api/projets/{id}/phases` | Phases d'un projet | Chef/Admin |
+| `PATCH` | `/api/phases/{id}/facturation` | Marquer une phase comme facturée | Comptable |
+| `POST` | `/api/phases/{id}/facture` | Génération facture depuis phase | Comptable |
+| `GET` | `/api/reporting/tableau-de-bord` | Métriques globales KPIs | Directeur+ |
+| `GET` | `/api/documents/{id}/download` | Téléchargement sécurisé | Rôle autorisé |
+
+📚 **Documentation Interactive** : `http://localhost:9090/swagger-ui/index.html`
+
+---
+
+## 📊 Dashboard & Reporting
+
+### 🎯 Indicateurs Visualisés
 
 ---
 
@@ -162,8 +191,19 @@ Le projet respecte rigoureusement les diagrammes UML élaborés en amont (Packag
 *   **Validation** : Mise en place de `Bean Validation` (JSR-303) pour assurer l'intégrité des données entrantes.
 *   **Mappage Complexe** : Gestion des cycles de vie des entités liées (Cascade types).
 
+---
+
+🔍 Filtres Disponibles
+🗓️ Période personnalisée (date début/fin)
+🏢 Organisme / Chef de projet
+📊 État : En cours / Terminé / Facturé / Payé
+👥 Employé affecté
 
 ---
+
+
+--- 
+
 
 ## 🚀 Installation et Démarrage
 1. **Configuration DB** : Modifier le fichier `src/main/resources/application.properties`(URL DB, login/pass).
