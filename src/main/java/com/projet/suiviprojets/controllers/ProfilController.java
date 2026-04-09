@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/profils")
 @Tag(name = "Gestion des Profils", description = "API pour gérer les rôles (Admin, Chef de projet, etc.)")

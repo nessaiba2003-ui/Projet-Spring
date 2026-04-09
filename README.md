@@ -43,7 +43,7 @@ Pour ce projet, nous avons implémenté une couche de sécurité moderne basée 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
 Démonstration de la structure du projet sous Java 21 avec Maven.
 <p align="center">
-  <img src= "![img.png](img.png)" alt="Structure IntelliJ" width="850">
+  <img src= "" alt="Structure IntelliJ" width="850" height="200">
   <br><em>Packages organisés, configuration du pom.xml et classe Main.</em>
 </p>
 
