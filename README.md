@@ -57,28 +57,24 @@ Nous avons mis en place une stack de monitoring complète pour assurer la haute 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
 Démonstration de la structure du projet sous Java 21 avec Maven.
 <p align="center">
-  <img src= "" alt="Structure IntelliJ" width="850" height="200">
   <br><em>Packages organisés, configuration du pom.xml et classe Main.</em>
 </p>
 
 ### 📄 2. Documentation Interactive avec Swagger
 Le projet expose une documentation vivante accessible via OpenAPI.
 <p align="center">
-  <img src="URL_DE_TA_CAPTURE_SWAGGER" alt="Swagger UI" width="850">
   <br><em>Liste complète des endpoints et modèles de données testables en direct.</em>
 </p>
 
 ### 🧪 3. Tests des API REST (Postman)
 Validation des flux de données et des réponses JSON.
 <p align="center">
-  <img src="URL_DE_TA_CAPTURE_POSTMAN" alt="Tests Postman" width="850">
   <br><em>Test réussi : Création d'une phase de projet avec retour 201 Created.</em>
 </p>
 
 ### 🛡️ 4. Validation de la Sécurité JWT
 Preuve du fonctionnement des filtres de sécurité.
 <p align="center">
-  <img src="URL_DE_TA_CAPTURE_SECURITY_TEST" alt="Test Sécurité" width="850">
   <br><em>Capture montrant le blocage d'une requête sans Token Bearer.</em>
 </p>
 
