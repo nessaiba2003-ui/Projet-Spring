@@ -65,6 +65,13 @@ public class OrganismeController {
         return res != null ? ResponseEntity.ok(res) : ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "Modifier un organisme")
+    @PutMapping("/{id}")
+    public ResponseEntity<OrganismeResponseDTO> update(@PathVariable Long id, @RequestBody @Valid OrganismeRequestDTO dto) {
+        OrganismeResponseDTO updated = organismeService.update(id, dto);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
+
     @Operation(summary = "Supprimer un organisme")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @Valid Long id) {

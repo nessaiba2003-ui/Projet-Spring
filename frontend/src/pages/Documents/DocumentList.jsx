@@ -1,17 +1,30 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { documentService } from '../../services/documentService';
+import { projetService } from '../../services/projetService';
 import { FileCode, Download, Trash2, Plus, Info } from 'lucide-react';
 import Modal from '../../components/Modal';
+import { canMutateModule } from '../../utils/roles';
 
 export default function DocumentList() {
   const { projetId } = useParams();
   const [documents, setDocuments] = useState([]);
   const [isDelOpen, setDelOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const role = useSelector((state) => state.auth.role);
+  const canManage = canMutateModule(role, 'documents');
 
-  useEffect(() => { if(projetId) load(); }, [projetId]);
-  const load = () => documentService.getByProjet(projetId).then(setDocuments).catch(console.error);
+  useEffect(() => { load(); }, [projetId]);
+  const load = () => {
+    if (projetId) {
+      return documentService.getByProjet(projetId).then((rows) => setDocuments(rows || [])).catch(() => setDocuments([]));
+    }
+    return projetService.getAll()
+      .then((projets) => Promise.all((projets || []).map((p) => documentService.getByProjet(p.id).catch(() => []))))
+      .then((groups) => setDocuments(groups.flat()))
+      .catch(() => setDocuments([]));
+  };
 
   const handleDownload = async (doc) => {
     const blob = await documentService.download(doc.id);
@@ -26,10 +39,12 @@ export default function DocumentList() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Documents du Projet</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-sm shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-          <Plus size={18}/> Ajouter un document
-        </button>
+        <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">{projetId ? 'Documents du Projet' : 'Tous les documents'}</h1>
+        {canManage && projetId && (
+          <Link to={`/projets/${projetId}/documents/nouveau`} className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-sm shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+            <Plus size={18}/> Ajouter un document
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -40,9 +55,9 @@ export default function DocumentList() {
                 <FileCode size={30}/>
               </div>
               <div>
-                <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest">{doc.titre}</h3>
+                <h3 className="font-bold text-slate-800 uppercase text-xs tracking-widest">{doc.code || doc.titre || `DOC-${doc.id}`}</h3>
                 {/* APERÇU DES MÉTADONNÉES (Consigne Prof) */}
-                <p className="text-[10px] text-blue-600 font-black mt-1 uppercase tracking-tighter">{doc.typeDoc}</p>
+                <p className="text-[10px] text-blue-600 font-black mt-1 uppercase tracking-tighter">{doc.typeDoc || doc.cheminFichier || 'DOCUMENT'}</p>
                 <p className="text-[11px] text-slate-400 mt-2 italic font-medium max-w-[200px] truncate">{doc.description}</p>
               </div>
             </div>
@@ -51,9 +66,11 @@ export default function DocumentList() {
               <button onClick={() => handleDownload(doc)} className="p-2 bg-slate-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors" title="Télécharger sécurisé">
                 <Download size={18}/>
               </button>
-              <button onClick={() => { setSelectedId(doc.id); setDelOpen(true); }} className="p-2 bg-slate-50 text-slate-300 hover:text-red-500 rounded-lg transition-colors">
-                <Trash2 size={18}/>
-              </button>
+              {canManage && (
+                <button onClick={() => { setSelectedId(doc.id); setDelOpen(true); }} className="p-2 bg-slate-50 text-slate-300 hover:text-red-500 rounded-lg transition-colors">
+                  <Trash2 size={18}/>
+                </button>
+              )}
             </div>
           </div>
         ))}

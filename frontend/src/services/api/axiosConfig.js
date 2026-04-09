@@ -1,7 +1,9 @@
 import axios from 'axios';
+import { store } from '../../store';
+import { logout } from '../../store/authSlice';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://localhost:9090/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -9,7 +11,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = store.getState().auth?.token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -75,11 +77,19 @@ api.interceptors.response.use(
   },
   (error) => {
     const status = error.response ? error.response.status : null;
+    const shouldRedirectOn403 = Boolean(error?.config?.redirectOn403);
 
     if (status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
+      store.dispatch(logout());
       window.location.href = '/login';
+      return Promise.reject(error);
+    }
+
+    // Important: do not force a global redirect on every 403.
+    // Some pages call mixed endpoints (e.g. dashboard counters) where one forbidden
+    // request should not eject the user to /denied.
+    if (status === 403 && shouldRedirectOn403) {
+      window.location.href = '/denied';
       return Promise.reject(error);
     }
 

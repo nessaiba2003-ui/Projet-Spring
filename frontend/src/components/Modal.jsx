@@ -1,7 +1,16 @@
 import React from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, onConfirm, title, children }) {
+export default function Modal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  children,
+  confirmLabel = "Confirmer la suppression",
+  cancelLabel = "Annuler",
+  hideCancel = false,
+}) {
   if (!isOpen) return null;
 
   return (
@@ -19,11 +28,13 @@ export default function Modal({ isOpen, onClose, onConfirm, title, children }) {
           {children}
         </div>
         <div className="p-6 bg-slate-50 border-t flex justify-end gap-3">
-          <button onClick={onClose} className="px-5 py-2 text-slate-500 font-bold hover:bg-slate-200 rounded-xl transition-colors">
-            Annuler
-          </button>
-          <button onClick={onConfirm} className="px-5 py-2 bg-red-600 text-white font-black uppercase text-xs tracking-widest rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-colors">
-            Confirmer la suppression
+          {!hideCancel && (
+            <button onClick={onClose} className="px-5 py-2 text-slate-500 font-bold hover:bg-slate-200 rounded-xl transition-colors">
+              {cancelLabel}
+            </button>
+          )}
+          <button onClick={onConfirm || onClose} className="px-5 py-2 bg-red-600 text-white font-black uppercase text-xs tracking-widest rounded-xl hover:bg-red-700 shadow-lg shadow-red-200 transition-colors">
+            {confirmLabel}
           </button>
         </div>
       </div>

@@ -5,6 +5,7 @@ package com.projet.suiviprojets.services;
 import com.projet.suiviprojets.entities.Phase;
 import com.projet.suiviprojets.entities.Projet;
 import com.projet.suiviprojets.exceptions.ProjectBusinessException;
+import com.projet.suiviprojets.repositories.FactureRepository;
 import com.projet.suiviprojets.repositories.PhaseRepository;
 import com.projet.suiviprojets.repositories.ProjetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public class PhaseService {
 
     @Autowired private PhaseRepository phaseRepository;
     @Autowired private ProjetRepository projetRepository;
+    @Autowired private FactureRepository factureRepository;
 
     public Phase save(Long projetId, Phase phase) {
         Projet projet = projetRepository.findById(projetId).orElseThrow();
@@ -44,6 +46,7 @@ public class PhaseService {
     }
 
     public List<Phase> findByProjet(Long projetId) { return phaseRepository.findByProjetId(projetId); }
+    public List<Phase> findAll() { return phaseRepository.findAll(); }
 
     public Phase findById(Long id) { return phaseRepository.findById(id).orElse(null); }
 
@@ -56,12 +59,45 @@ public class PhaseService {
         return false;
     }
 
+    public Phase update(Long id, Phase incoming) {
+        Phase existing = phaseRepository.findById(id).orElseThrow();
+        Projet projet = existing.getProjet();
+
+        if (incoming.getDateDebut().isBefore(projet.getDateDebut()) ||
+                incoming.getDateFin().isAfter(projet.getDateFin())) {
+            throw new ProjectBusinessException("Les dates de la phase sortent de l'intervalle du projet !");
+        }
+
+        Double totalActuel = phaseRepository.sumMontantsByProjetId(projet.getId());
+        if (totalActuel == null) totalActuel = 0.0;
+        double totalSansPhaseCourante = totalActuel - (existing.getMontant() != null ? existing.getMontant() : 0.0);
+        if (totalSansPhaseCourante + incoming.getMontant() > projet.getMontantGlobal()) {
+            throw new ProjectBusinessException("Le montant total des phases dépasse le budget du projet !");
+        }
+
+        existing.setLibelle(incoming.getLibelle());
+        existing.setMontant(incoming.getMontant());
+        existing.setDateDebut(incoming.getDateDebut());
+        existing.setDateFin(incoming.getDateFin());
+        if (incoming.getEtatRealisation() != null) existing.setEtatRealisation(incoming.getEtatRealisation());
+        if (incoming.getEtatFacturation() != null) existing.setEtatFacturation(incoming.getEtatFacturation());
+        if (incoming.getEtatPaiement() != null) existing.setEtatPaiement(incoming.getEtatPaiement());
+        return phaseRepository.save(existing);
+    }
+
     // Changement d'état (PATCH)
     public Phase updateEtat(Long id, String type, Boolean etat) {
         Phase phase = phaseRepository.findById(id).orElseThrow();
         if (type.equals("realisation")) phase.setEtatRealisation(etat);
         if (type.equals("facturation")) phase.setEtatFacturation(etat);
-        if (type.equals("paiement")) phase.setEtatPaiement(etat);
+        if (type.equals("paiement")) {
+            phase.setEtatPaiement(etat);
+            // UML workflow: quand phase payée, la facture liée est aussi marquée payée
+            factureRepository.findByPhaseId(id).ifPresent(f -> {
+                f.setPayee(Boolean.TRUE.equals(etat));
+                factureRepository.save(f);
+            });
+        }
         return phaseRepository.save(phase);
     }
 }

@@ -1,15 +1,34 @@
 import { useEffect, useState } from 'react';
 import { projetService } from '../../services/projetService';
-import { Search, Plus, Eye, Edit, FileText } from 'lucide-react';
+import { Search, Plus, Eye, Edit, FileText, Layers, UserPlus, FileCode, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { canMutateModule } from '../../utils/roles';
+import Modal from '../../components/Modal';
 
 export default function ProjetList() {
   const [projets, setProjets] = useState([]);
   const [filters, setFilters] = useState({ code: '', organisme: '', chef: '' });
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [infoModal, setInfoModal] = useState({ open: false, title: 'Erreur', message: '' });
+  const role = useSelector((state) => state.auth.role);
+  const canManage = canMutateModule(role, 'projets');
 
   useEffect(() => {
     projetService.getAll().then(setProjets).catch(console.error);
   }, []);
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await projetService.delete(deleteTarget.id);
+      setProjets((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+    } catch (e) {
+      setInfoModal({ open: true, title: 'Erreur', message: "Suppression impossible : ce projet contient probablement des phases." });
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
 
   const filtered = projets.filter(p =>
     p.code.toLowerCase().includes(filters.code.toLowerCase()) &&
@@ -21,9 +40,11 @@ export default function ProjetList() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Gestion des Projets</h1>
-        <Link to="/projets/nouveau" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-blue-900/20 hover:bg-blue-700">
-          <Plus size={20}/> Nouveau Projet
-        </Link>
+        {canManage && (
+          <Link to="/projets/nouveau" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-blue-900/20 hover:bg-blue-700">
+            <Plus size={20}/> Nouveau Projet
+          </Link>
+        )}
       </div>
 
       {/* RECHERCHE MULTICRITÈRE (Consigne Prof) */}
@@ -78,13 +99,38 @@ export default function ProjetList() {
                 <td className="p-4 text-right space-x-1">
                   <Link title="Détail" to={`/projets/${p.id}`} className="p-2 text-slate-400 hover:text-blue-600 inline-block"><Eye size={18}/></Link>
                   <Link title="Résumé" to={`/projets/resume/${p.id}`} className="p-2 text-slate-400 hover:text-emerald-600 inline-block"><FileText size={18}/></Link>
-                  <Link title="Modifier" to={`/projets/edit/${p.id}`} className="p-2 text-slate-400 hover:text-amber-600 inline-block"><Edit size={18}/></Link>
+                  <Link title="Phases" to={`/projets/${p.id}/phases`} className="p-2 text-slate-400 hover:text-indigo-600 inline-block"><Layers size={18}/></Link>
+                  <Link title="Documents" to={`/projets/${p.id}/documents`} className="p-2 text-slate-400 hover:text-cyan-600 inline-block"><FileCode size={18}/></Link>
+                  <Link title="Affectations" to={`/projets/${p.id}/affectations`} className="p-2 text-slate-400 hover:text-fuchsia-600 inline-block"><UserPlus size={18}/></Link>
+                  {canManage && <Link title="Modifier" to={`/projets/edit/${p.id}`} className="p-2 text-slate-400 hover:text-amber-600 inline-block"><Edit size={18}/></Link>}
+                  {canManage && <button title="Supprimer" onClick={() => setDeleteTarget(p)} className="p-2 text-slate-400 hover:text-red-600 inline-block"><Trash2 size={18}/></button>}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Suppression projet"
+      >
+        <p>
+          Voulez-vous vraiment supprimer le projet <strong>{deleteTarget?.code || deleteTarget?.nom}</strong> ?
+        </p>
+      </Modal>
+
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ ...infoModal, open: false })}
+        title={infoModal.title}
+        hideCancel
+        confirmLabel="OK"
+      >
+        <p>{infoModal.message}</p>
+      </Modal>
     </div>
   );
 }

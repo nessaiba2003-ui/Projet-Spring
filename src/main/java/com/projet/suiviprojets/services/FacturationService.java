@@ -47,16 +47,46 @@ public class FacturationService {
             throw new ProjectBusinessException("Erreur : Cette phase est déjà facturée !");
         }
 
-        // 2. Préparation de la facture
+        // 2. Préparation de la facture (UML: montant hérité de la phase)
         facture.setPhase(phase);
+        facture.setMontant(phase.getMontant());
         facture.setDateFacture(LocalDate.now());
+        if (facture.getReference() == null || facture.getReference().isBlank()) {
+            facture.setReference("FAC-" + phase.getId() + "-" + System.currentTimeMillis());
+        }
 
         // 3. Mise à jour de l'état de la phase pour la cohérence
         phase.setEtatFacturation(true);
+        phase.setEtatPaiement(Boolean.TRUE.equals(facture.isPayee()));
         phaseRepository.save(phase);
 
         // 4. Sauvegarde
         return factureRepository.save(facture);
+    }
+
+    public Facture update(Long id, Facture incoming) {
+        Facture existing = factureRepository.findById(id)
+                .orElseThrow(() -> new ProjectBusinessException("Facture introuvable"));
+
+        if (incoming.getReference() != null) existing.setReference(incoming.getReference());
+        // UML: montant facture aligné au montant de la phase liée
+        if (existing.getPhase() != null && existing.getPhase().getMontant() != null) {
+            existing.setMontant(existing.getPhase().getMontant());
+        } else if (incoming.getMontant() != null) {
+            existing.setMontant(incoming.getMontant());
+        }
+        if (incoming.getDateFacture() != null) existing.setDateFacture(incoming.getDateFacture());
+        existing.setPayee(incoming.isPayee());
+
+        if (existing.getPhase() != null) {
+            Phase phase = existing.getPhase();
+            // Rester cohérent avec le workflow UML
+            phase.setEtatFacturation(true);
+            phase.setEtatPaiement(existing.isPayee());
+            phaseRepository.save(phase);
+        }
+
+        return factureRepository.save(existing);
     }
 
     // Supprimer une facture

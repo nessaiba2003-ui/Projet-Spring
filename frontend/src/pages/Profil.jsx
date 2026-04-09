@@ -1,22 +1,36 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api/axiosConfig';
-import { UserCircle2, ShieldCheck, KeyRound, CheckCircle2 } from 'lucide-react';
+import { User, Shield, Key, CheckCircle2 } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 export default function Profil() {
+  const authUser = useSelector((state) => state.auth.user);
+  const authRole = useSelector((state) => state.auth.role);
   const storedRole = String(localStorage.getItem('role') || '').replace(/ROLE_/gi, '').replace(/_/g, ' ') || 'UTILISATEUR';
   const storedUsername = localStorage.getItem('username') || 'Utilisateur Connecté';
   const [user, setUser] = useState({
     username: storedUsername,
-    role: storedRole
+    role: storedRole,
+    nom: '',
+    prenom: '',
+    email: '',
   });
   const [msg, setMsg] = useState(null);
 
   useEffect(() => {
     // Si l'API /me n'existe pas, on garde les données locales simulées
     api.get('/auth/me')
-      .then(data => { if(data?.username) setUser(data); })
+      .then(data => {
+        setUser({
+          username: data?.login || data?.username || authUser?.username || storedUsername,
+          role: String(data?.role || data?.profil?.libelle || authRole || storedRole).replace(/ROLE_/gi, '').replace(/_/g, ' '),
+          nom: data?.nom || authUser?.nom || '',
+          prenom: data?.prenom || authUser?.prenom || '',
+          email: data?.email || authUser?.email || '',
+        });
+      })
       .catch(() => console.log('Utilisation des données locales pour le profil'));
-  }, []);
+  }, [authUser, authRole, storedRole, storedUsername]);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -66,17 +80,27 @@ export default function Profil() {
             <div className="w-full md:w-2/3 p-12 z-10">
               <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-2 opacity-70">Identité Active</p>
               <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-md mb-8">
-                {localStorage.getItem('username') || 'Non défini'}
+                {`${user.prenom || ''} ${user.nom || ''}`.trim() || user.username || 'Non défini'}
               </h3>
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rôle Système</p>
-                  <p className="text-sm font-bold text-slate-200">{localStorage.getItem('role')?.replace(/ROLE_/gi, '').replace(/_/g, ' ') || 'Inconnu'}</p>
+                  <p className="text-sm font-bold text-slate-200">{user.role || 'Inconnu'}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dernière Connexion</p>
                   <p className="text-sm font-bold text-slate-200">Aujourd'hui, {new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}</p>
+                </div>
+              </div>
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nom d'utilisateur</p>
+                  <p className="text-sm font-bold text-slate-200">{user.username || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email</p>
+                  <p className="text-sm font-bold text-slate-200">{user.email || '-'}</p>
                 </div>
               </div>
             </div>

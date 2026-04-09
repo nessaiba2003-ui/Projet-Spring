@@ -24,7 +24,8 @@ public class LivrableService {
 
     // POST /api/phases/{phaseId}/livrables
     public LivrableDTO save(Long phaseId, LivrableDTO dto) {
-        Phase phase = phaseRepository.findById(phaseId)
+        Long resolvedPhaseId = dto.getPhaseId() != null ? dto.getPhaseId() : phaseId;
+        Phase phase = phaseRepository.findById(resolvedPhaseId)
                 .orElseThrow(() -> new ProjectBusinessException("Phase introuvable"));
 
         Livrable livrable = new Livrable();
@@ -62,6 +63,11 @@ public class LivrableService {
         existing.setDescription(dto.getDescription());
         existing.setChemin(dto.getChemin());
         existing.setDateLivraison(dto.getDateLivraison());
+        if (dto.getPhaseId() != null) {
+            Phase phase = phaseRepository.findById(dto.getPhaseId())
+                    .orElseThrow(() -> new ProjectBusinessException("Phase introuvable"));
+            existing.setPhase(phase);
+        }
 
         Livrable updated = livrableRepository.save(existing);
         return mapToDTO(updated);
@@ -87,6 +93,7 @@ public class LivrableService {
         dto.setDescription(l.getDescription());
         dto.setChemin(l.getChemin());
         dto.setDateLivraison(l.getDateLivraison());
+        dto.setPhaseId(l.getPhase() != null ? l.getPhase().getId() : null);
         return dto;
     }
 }

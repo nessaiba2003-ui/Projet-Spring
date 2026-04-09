@@ -73,6 +73,19 @@ public class OrganismeService {
         return false;
     }
 
+    public OrganismeResponseDTO update(Long id, OrganismeRequestDTO dto) {
+        Organisme org = organismeRepository.findById(id).orElse(null);
+        if (org == null) return null;
+
+        org.setCode(dto.getCode());
+        org.setNom(dto.getNom());
+        org.setContact(dto.getContact());
+        org.setAdresse(dto.getAdresse());
+
+        Organisme saved = organismeRepository.save(org);
+        return mapToResponse(saved);
+    }
+
     private OrganismeResponseDTO mapToResponse(Organisme org) {
         OrganismeResponseDTO res = new OrganismeResponseDTO();
         res.setId(org.getId());

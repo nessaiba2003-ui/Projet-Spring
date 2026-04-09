@@ -4,10 +4,7 @@ export const documentService = {
   // Liste des documents d'un projet spécifique
   getByProjet: (projetId) => api.get(`/projets/${projetId}/documents`),
 
-  // Ajout avec Upload (Multipart)
-  create: (projetId, formData) => api.post(`/projets/${projetId}/documents`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  create: (projetId, data) => api.post(`/projets/${projetId}/documents`, data),
 
   // Téléchargement sécurisé
   download: (id) => api.get(`/documents/${id}/download`, {

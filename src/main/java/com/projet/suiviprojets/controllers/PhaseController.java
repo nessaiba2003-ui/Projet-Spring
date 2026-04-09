@@ -29,10 +29,20 @@ public class PhaseController {
         return ResponseEntity.ok(phaseService.findByProjet(projetId));
     }
 
+    @GetMapping("/phases")
+    public ResponseEntity<List<Phase>> getAll() {
+        return ResponseEntity.ok(phaseService.findAll());
+    }
+
     @GetMapping("/phases/{id}")
     public ResponseEntity<Phase> getById(@PathVariable Long id) {
         Phase p = phaseService.findById(id);
         return p != null ? ResponseEntity.ok(p) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/phases/{id}")
+    public ResponseEntity<Phase> update(@PathVariable Long id, @Valid @RequestBody Phase phase) {
+        return ResponseEntity.ok(phaseService.update(id, phase));
     }
 
     @DeleteMapping("/phases/{id}")

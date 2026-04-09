@@ -1,7 +1,11 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useSelector } from 'react-redux';
 
 export default function MainLayout() {
+  const role = useSelector((state) => state.auth.role);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   return (
     <div className="flex min-h-screen bg-[#f8fafc]">
       <Sidebar />
@@ -10,10 +14,12 @@ export default function MainLayout() {
           <div className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Système de Suivi de Projets</div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-xs font-bold text-slate-700 leading-none">ADMINISTRATEUR</p>
+              <p className="text-xs font-bold text-slate-700 leading-none">{role || 'invité'}</p>
               <p className="text-[9px] text-green-500 font-bold uppercase mt-1 tracking-tighter">Session Active</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-400">AD</div>
+            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-400">
+              {isAuthenticated ? (role || 'i').slice(0, 2).toUpperCase() : '--'}
+            </div>
           </div>
         </header>
 

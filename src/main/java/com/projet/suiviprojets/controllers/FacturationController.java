@@ -45,6 +45,12 @@ public class FacturationController {
         }
     }
 
+    @Operation(summary = "Modifier une facture par son ID")
+    @PutMapping("/factures/{id}")
+    public ResponseEntity<Facture> update(@PathVariable Long id, @Valid @RequestBody Facture facture) {
+        return new ResponseEntity<>(factureService.update(id, facture), HttpStatus.OK);
+    }
+
     @Operation(summary = "Supprimer une facture par son ID")
     @DeleteMapping("/factures/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
