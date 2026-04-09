@@ -25,6 +25,10 @@ L'application suit une **Architecture en Couches** standard, garantissant une s�
 *   **Couche Data Access (Repositories)** : Interface avec la base de données via Spring Data JPA.
 *   **Couche Modèle (Entities)** : Représentation des tables de la base de données (Organisme, Projet, Phase, Employé, etc.).
 *   **Couche Sécurité** : Gestion de l'authentification et des autorisations via Spring Security et JWT.
+*   **Backend (Spring Boot )** : API REST sécurisée, gérant la logique métier et l'exposition des métriques de santé.
+*   **Frontend (React 18 + Vite)** : Interface utilisateur dynamique et réactive, développée avec Tailwind CSS pour un design moderne.
+*   **Infrastructure (Docker)** : Orchestration de services pour le monitoring (Prometheus/Grafana) et la base de données.
+*   **Monitoring (Observabilité)** : Collecte de données en temps réel sur l'état de la JVM et des performances de l'API.
 
 ---
 
@@ -36,8 +40,18 @@ Pour ce projet, nous avons implémenté une couche de sécurité moderne basée 
 4.  **Protection des Routes** : Toute tentative d'accès sans token valide renvoie une erreur `401 Unauthorized`.
 ---
 
+## 📊 Monitoring & Observabilité (Docker Stack)
+Nous avons mis en place une stack de monitoring complète pour assurer la haute disponibilité du système :
+
+*   **Prometheus** : Serveur de collecte qui "scrape" les métriques exposées par l'endpoint `/actuator/prometheus` du backend.
+*   **Grafana** : Interface de visualisation connectée à Prometheus.
+    *   *Dashboard utilisé* : JVM Micrometer (ID: 4701).
+    *   *Indicateurs suivis* : Utilisation CPU, Consommation RAM (Heap Memory), Taux de réussite des requêtes HTTP, Nombre de threads actifs.
+
+> **Accès** : Grafana est accessible sur le port `3001` après le lancement du Docker Compose.
 
 
+---
 ## 📸 Démonstration Technique
 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
@@ -102,7 +116,22 @@ Le projet respecte rigoureusement les diagrammes UML élaborés en amont (Packag
    ```bash
    mvn clean install
    mvn spring-boot:run
+⚙️ Lancement du Backend
+cd backend
+mvn spring-boot:run
+💻 Lancement du Frontend (React)
+cd frontend
+npm install
+npm run dev
+### 🐳 Lancement de l'Infrastructure (Monitoring)
+Assurez-vous que Docker Desktop est lancé, puis à la racine du projet :
+```bash
+docker-compose up -d
 
+Endpoints clés :
+Frontend : http://localhost:5173
+Backend : http://localhost:9090
+Grafana : http://localhost:3001
 
 ## 👥 Équipe de Développement
 *   **Hafsa Belahnech & Nessaiba Messaadiyene** 
