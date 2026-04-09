@@ -2,15 +2,53 @@ import { useEffect, useState } from 'react';
 import { factureService } from '../../services/factureService';
 import { Search, Filter, Receipt, Eye, CheckCircle2, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { canMutateModule } from '../../utils/roles';
+import { phaseService } from '../../services/phaseService';
 
 export default function FactureList() {
   const [factures, setFactures] = useState([]);
+  const [nonFacturees, setNonFacturees] = useState([]);
   const [filter, setFilter] = useState('TOUS'); // FILTRAGE PAR ÉTAT
+  const role = useSelector((state) => state.auth.role);
+  const canManage = canMutateModule(role, 'factures');
 
   useEffect(() => { load(); }, []);
-  const load = () => factureService.getAll().then(data => setFactures(data || [])).catch(() => setFactures([]));
+  const load = async () => {
+    try {
+      const [allFactures, allPhases] = await Promise.all([
+        factureService.getAll().catch(() => []),
+        phaseService.getAll().catch(() => []),
+      ]);
+      const facturesList = allFactures || [];
+      setFactures(facturesList);
+      const facturedPhaseIds = new Set(facturesList.map((f) => f?.phase?.id).filter(Boolean));
+      const notFacturedRows = (allPhases || [])
+        .filter((p) => p?.id && p.etatFacturation === false && !facturedPhaseIds.has(p.id))
+        .map((p) => ({
+          id: `NF-${p.id}`,
+          reference: `NON-FACTUREE-PHASE-${p.id}`,
+          dateFacture: '-',
+          montant: p.montant || 0,
+          payee: false,
+          isNonFacturee: true,
+          phase: p,
+        }));
+      setNonFacturees(notFacturedRows);
+    } catch {
+      setFactures([]);
+      setNonFacturees([]);
+    }
+  };
 
-  const filteredData = factures.filter(f => filter === 'TOUS' || f.statut === filter);
+  const mergedData = [...factures, ...nonFacturees];
+
+  const filteredData = mergedData.filter((f) => {
+    if (filter === 'TOUS') return true;
+    if (filter === 'PAYEE') return f.isNonFacturee !== true && (f.payee === true || f.statut === 'PAYEE');
+    if (filter === 'FACTUREE') return f.isNonFacturee === true || (f.payee !== true && f.statut !== 'PAYEE');
+    return true;
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -48,22 +86,33 @@ export default function FactureList() {
                 </td>
                 {/* AFFICHAGE PHASE ASSOCIÉE */}
                 <td className="p-5">
-                  <div className="font-bold text-blue-600 text-[11px] uppercase tracking-tighter italic underline">{f.phase?.nom}</div>
-                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Projet: {f.phase?.projet?.nom}</div>
+                  <div className="font-bold text-blue-600 text-[11px] uppercase tracking-tighter italic underline">
+                    {f.phase?.libelle || `Phase #${f.phase?.id || '-'}`}
+                  </div>
+                  <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                    Projet: {f.phase?.projet?.nom || '-'}
+                  </div>
                 </td>
-                <td className="p-5 font-black text-slate-700">{f.montantTTC} MAD</td>
+                <td className="p-5 font-black text-slate-700">{f.montant ?? f.montantTTC ?? 0} MAD</td>
                 <td className="p-5 text-center">
                   {/* STATUT FACTURÉ / PAYÉ */}
                   <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                    f.statut === 'PAYEE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                    (f.payee === true || f.statut === 'PAYEE')
+                      ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                      : 'bg-amber-50 text-amber-600 border-amber-100'
                   }`}>
-                    {f.statut === 'PAYEE' ? <CheckCircle2 size={12}/> : <Clock size={12}/>}
-                    {f.statut}
+                    {(f.payee === true || f.statut === 'PAYEE') ? <CheckCircle2 size={12}/> : <Clock size={12}/>}
+                    {(f.payee === true || f.statut === 'PAYEE') ? 'PAYEE' : (f.isNonFacturee ? 'NON FACTUREE' : 'FACTUREE')}
                   </span>
                 </td>
                 <td className="p-5 text-right">
-                  <Link to={`/factures/${f.id}`} className="p-2 text-slate-300 hover:text-blue-600 inline-block transition-colors"><Eye size={18}/></Link>
-                  <Link to={`/factures/edit/${f.id}`} className="p-2 text-slate-300 hover:text-amber-600 inline-block transition-colors font-bold">Modif</Link>
+                  {!f.isNonFacturee && <Link to={`/factures/${f.id}`} className="p-2 text-slate-300 hover:text-blue-600 inline-block transition-colors"><Eye size={18}/></Link>}
+                  {canManage && !f.isNonFacturee && <Link to={`/factures/edit/${f.id}`} className="p-2 text-slate-300 hover:text-amber-600 inline-block transition-colors font-bold">Modif</Link>}
+                  {canManage && f.isNonFacturee && f.phase?.id && (
+                    <Link to={`/factures/phases/${f.phase.id}/factures/nouveau`} className="p-2 text-slate-300 hover:text-blue-600 inline-block transition-colors font-bold">
+                      Facturer
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

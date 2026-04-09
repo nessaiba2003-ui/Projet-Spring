@@ -3,12 +3,17 @@ import { organismeService } from '../../services/organismeService';
 import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom'; // AJOUTÉ
 import Modal from '../../components/Modal';
+import { useSelector } from 'react-redux';
+import { canMutateModule } from '../../utils/roles';
 
 export default function OrganismeList() {
   const [organismes, setOrganismes] = useState([]);
   const [search, setSearch] = useState({ nom: '', code: '' });
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [infoModal, setInfoModal] = useState({ open: false, title: 'Erreur', message: '' });
+  const role = useSelector((state) => state.auth.role);
+  const canManage = canMutateModule(role, 'organismes');
 
   useEffect(() => { loadOrganismes(); }, []);
 
@@ -24,7 +29,9 @@ export default function OrganismeList() {
       await organismeService.delete(selectedId);
       setDeleteModalOpen(false);
       loadOrganismes();
-    } catch (err) { alert("Erreur lors de la suppression backend"); }
+    } catch (err) {
+      setInfoModal({ open: true, title: 'Erreur', message: "Erreur lors de la suppression backend" });
+    }
   };
 
   const filteredData = organismes.filter(o =>
@@ -37,9 +44,11 @@ export default function OrganismeList() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Répertoire Organismes</h1>
         {/* LIEN VERS FORMULAIRE AJOUT */}
-        <Link to="/organismes/nouveau" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg hover:bg-blue-700 transition-all">
-          <Plus size={20}/> Nouvel Organisme
-        </Link>
+        {canManage && (
+          <Link to="/organismes/nouveau" className="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg hover:bg-blue-700 transition-all">
+            <Plus size={20}/> Nouvel Organisme
+          </Link>
+        )}
       </div>
 
       {/* RECHERCHE MULTICRITÈRE */}
@@ -76,13 +85,15 @@ export default function OrganismeList() {
                 <td className="p-5 text-slate-500 italic">{org.contact}</td>
                 <td className="p-5 text-right space-x-1">
                   <Link to={`/organismes/${org.id}`} className="p-2 text-slate-300 hover:text-blue-600 inline-block"><Eye size={18}/></Link>
-                  <Link to={`/organismes/edit/${org.id}`} className="p-2 text-slate-300 hover:text-amber-600 inline-block"><Edit size={18}/></Link>
-                  <button
-                    onClick={() => { setSelectedId(org.id); setDeleteModalOpen(true); }}
-                    className="p-2 text-slate-300 hover:text-red-600"
-                  >
-                    <Trash2 size={18}/>
-                  </button>
+                  {canManage && <Link to={`/organismes/edit/${org.id}`} className="p-2 text-slate-300 hover:text-amber-600 inline-block"><Edit size={18}/></Link>}
+                  {canManage && (
+                    <button
+                      onClick={() => { setSelectedId(org.id); setDeleteModalOpen(true); }}
+                      className="p-2 text-slate-300 hover:text-red-600"
+                    >
+                      <Trash2 size={18}/>
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -97,6 +108,16 @@ export default function OrganismeList() {
         title="Confirmation de suppression"
       >
         Êtes-vous sûr de vouloir supprimer cet organisme ? Les projets associés seront impactés.
+      </Modal>
+
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ ...infoModal, open: false })}
+        title={infoModal.title}
+        hideCancel
+        confirmLabel="OK"
+      >
+        <p>{infoModal.message}</p>
       </Modal>
     </div>
   );

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 public class LivrableDTO {
     private Long id;
+    private Long phaseId;
 
     @NotBlank(message = "Le code livrable est obligatoire")
     private String code;

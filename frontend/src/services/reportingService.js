@@ -2,7 +2,7 @@ import api from './api/axiosConfig';
 
 export const reportingService = {
   // Pour les cartes (Stats globales)
-  getGlobalStats: () => api.get('/reporting/stats'),
+  getGlobalStats: (params) => api.get('/reporting/tableau-de-bord', { params }),
 
   // Pour les tableaux filtrables (Consignes du Prof)
   // On passe "params" pour les filtres : dateDebut, dateFin, projetId, chefId

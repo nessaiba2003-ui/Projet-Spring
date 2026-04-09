@@ -27,8 +27,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé : " + login));
 
 
-        // On transforme son profil en rôle pour Spring (ex: ROLE_ADMINISTRATEUR)
-        String role = "ROLE_" + employe.getProfil().getLibelle().toUpperCase();
+        // IMPORTANT : la BDD stocke déjà des rôles comme ROLE_ADMINISTRATEUR.
+        // On évite donc de préfixer deux fois (ROLE_ROLE_*), sinon tous les contrôles échouent.
+        String rawRole = employe.getProfil() != null && employe.getProfil().getLibelle() != null
+                ? employe.getProfil().getLibelle().trim().toUpperCase()
+                : "ROLE_INVITE";
+        String role = rawRole.startsWith("ROLE_") ? rawRole : "ROLE_" + rawRole;
 
 
         // On renvoie l'utilisateur à Spring Security

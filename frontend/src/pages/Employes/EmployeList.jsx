@@ -2,13 +2,31 @@ import { useEffect, useState } from 'react';
 import { employeService } from '../../services/employeService';
 import { Search, UserPlus, Eye, Edit, Trash2, CalendarSearch } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { canMutateModule } from '../../utils/roles';
+import Modal from '../../components/Modal';
 
 export default function EmployeList() {
   const [employes, setEmployes] = useState([]);
   const [filter, setFilter] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [infoModal, setInfoModal] = useState({ open: false, title: 'Erreur', message: '' });
+  const role = useSelector((state) => state.auth.role);
+  const canManage = canMutateModule(role, 'employes');
 
   useEffect(() => { load(); }, []);
   const load = async () => { const data = await employeService.getAll(); setEmployes(data); };
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await employeService.delete(deleteTarget.id);
+      setEmployes((prev) => prev.filter((e) => e.id !== deleteTarget.id));
+    } catch (e) {
+      setInfoModal({ open: true, title: 'Erreur', message: "Suppression employé impossible." });
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
 
   const filtered = employes.filter(e =>
     e.matricule.toLowerCase().includes(filter.toLowerCase()) ||
@@ -24,9 +42,11 @@ export default function EmployeList() {
           <Link to="/employes/disponibilite" className="bg-emerald-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-emerald-900/20 hover:bg-emerald-700 transition-all">
             <CalendarSearch size={18}/> Disponibilité
           </Link>
-          <Link to="/employes/nouveau" className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-blue-900/20 hover:bg-blue-700 transition-all">
-            <UserPlus size={18}/> Ajouter un employé
-          </Link>
+          {canManage && (
+            <Link to="/employes/nouveau" className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-blue-900/20 hover:bg-blue-700 transition-all">
+              <UserPlus size={18}/> Ajouter un employé
+            </Link>
+          )}
         </div>
       </div>
 
@@ -61,14 +81,35 @@ export default function EmployeList() {
                 </td>
                 <td className="p-4 text-right space-x-1">
                   <Link to={`/employes/${emp.id}`} className="p-2 text-slate-400 hover:text-blue-600 inline-block transition-colors"><Eye size={18}/></Link>
-                  <Link to={`/employes/edit/${emp.id}`} className="p-2 text-slate-400 hover:text-amber-600 inline-block transition-colors"><Edit size={18}/></Link>
-                  <button className="p-2 text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={18}/></button>
+                  {canManage && <Link to={`/employes/edit/${emp.id}`} className="p-2 text-slate-400 hover:text-amber-600 inline-block transition-colors"><Edit size={18}/></Link>}
+                  {canManage && <button onClick={() => setDeleteTarget(emp)} className="p-2 text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={18}/></button>}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        title="Suppression employé"
+      >
+        <p>
+          Voulez-vous vraiment supprimer l'employé <strong>{deleteTarget?.nom} {deleteTarget?.prenom}</strong> ?
+        </p>
+      </Modal>
+
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ ...infoModal, open: false })}
+        title={infoModal.title}
+        hideCancel
+        confirmLabel="OK"
+      >
+        <p>{infoModal.message}</p>
+      </Modal>
     </div>
   );
 }

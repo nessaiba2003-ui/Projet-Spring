@@ -1,6 +1,6 @@
 package com.projet.suiviprojets.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class Facture {
     private boolean payee; // Pour l'état du paiement
 
     @OneToOne // Une facture par phase
-    @JsonIgnore
+    @JsonIgnoreProperties({"affectations"})
     private Phase phase;
 
 }

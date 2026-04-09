@@ -1,15 +1,37 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { projetService } from '../../services/projetService';
-import { Briefcase, Calendar, CheckCircle2 } from 'lucide-react';
+import { Briefcase, Calendar, CheckCircle2, Trash2 } from 'lucide-react';
+import { phaseService } from '../../services/phaseService';
+import { useSelector } from 'react-redux';
+import { canMutateModule } from '../../utils/roles';
+import Modal from '../../components/Modal';
 
 export default function ProjetResume() {
   const { id } = useParams();
   const [data, setData] = useState(null);
+  const [phases, setPhases] = useState([]);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [infoModal, setInfoModal] = useState({ open: false, title: 'Erreur', message: '' });
+  const role = useSelector((state) => state.auth.role);
+  const canManagePhases = canMutateModule(role, 'phases');
 
   useEffect(() => {
     projetService.getById(id).then(setData).catch(console.error);
+    phaseService.getByProjet(id).then((rows) => setPhases(rows || [])).catch(() => setPhases([]));
   }, [id]);
+
+  const confirmDeletePhase = async () => {
+    if (!deleteTarget) return;
+    try {
+      await phaseService.delete(deleteTarget.id);
+      setPhases((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+    } catch (e) {
+      setInfoModal({ open: true, title: 'Erreur', message: "Suppression de phase impossible." });
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
 
   if (!data) return <div className="p-20 text-center font-bold text-slate-300">Chargement du résumé...</div>;
 
@@ -44,6 +66,45 @@ export default function ProjetResume() {
            <p className="text-blue-100 text-xs mt-2 italic font-medium">L'intégration des budgets se fera en Phase 7.</p>
         </div>
       </div>
+
+      <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <p className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">Phases du projet</p>
+        <div className="space-y-3">
+          {phases.map((p) => (
+            <div key={p.id} className="flex items-center justify-between bg-slate-50 rounded-xl p-4">
+              <div>
+                <p className="font-bold text-slate-800">{p.libelle || p.nom}</p>
+                <p className="text-xs text-slate-500">{p.dateDebut} - {p.dateFin}</p>
+              </div>
+              {canManagePhases && (
+                <button onClick={() => setDeleteTarget(p)} className="p-2 text-slate-300 hover:text-red-600">
+                  <Trash2 size={18} />
+                </button>
+              )}
+            </div>
+          ))}
+          {phases.length === 0 && <p className="text-sm text-slate-400 italic">Aucune phase.</p>}
+        </div>
+      </div>
+
+      <Modal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDeletePhase}
+        title="Suppression phase"
+      >
+        <p>Supprimer la phase <strong>{deleteTarget?.libelle || deleteTarget?.nom}</strong> de ce projet ?</p>
+      </Modal>
+
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ ...infoModal, open: false })}
+        title={infoModal.title}
+        hideCancel
+        confirmLabel="OK"
+      >
+        <p>{infoModal.message}</p>
+      </Modal>
     </div>
   );
 }

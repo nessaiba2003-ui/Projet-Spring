@@ -34,9 +34,21 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword()));
 
         String jwt = jwtUtils.generateToken(authentication.getName());
+        Employe employe = employeRepository.findByLogin(authentication.getName())
+                .orElseThrow(() -> new BadCredentialsException("Utilisateur non trouvé"));
+
         Map<String, String> response = new HashMap<>();
         response.put("token", jwt);
+        response.put("username", employe.getLogin());
+        response.put("role", mapRoleForFrontend(employe));
         return ResponseEntity.ok(response);
+    }
+
+    private String mapRoleForFrontend(Employe employe) {
+        if (employe == null || employe.getProfil() == null || employe.getProfil().getLibelle() == null) {
+            return "ROLE_INVITE";
+        }
+        return employe.getProfil().getLibelle().toUpperCase();
     }
 
     // GET /api/auth/me

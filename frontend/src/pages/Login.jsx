@@ -1,10 +1,24 @@
 import { useForm } from 'react-hook-form';
 import api from '../services/api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess, syncProfileSuccess } from '../store/authSlice';
+import { authService } from '../services/authService';
+import { useState } from 'react';
+import Modal from '../components/Modal';
+
+const resolveRole = (profileLike) => {
+  const raw = profileLike?.role || profileLike?.profil?.libelle || '';
+  if (!raw) return null;
+  const cleaned = String(raw).trim().toUpperCase();
+  return cleaned.startsWith('ROLE_') ? cleaned : `ROLE_${cleaned}`;
+};
 
 export default function Login() {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [infoModal, setInfoModal] = useState({ open: false, title: 'Connexion', message: '' });
 
   const onSubmit = async (data) => {
     try {
@@ -18,24 +32,45 @@ export default function Login() {
         throw new Error('Identifiants incorrects');
       }
 
-      // 3. Stockage des vraies informations utilisateur
+      // Persistance explicite demandée (token + rôle)
       localStorage.setItem('token', userData.token);
+      localStorage.setItem('role', resolveRole(userData) || '');
 
-      // On sauvegarde le vrai rôle renvoyé par la BDD et le vrai nom !
-      if (userData.role) {
-        localStorage.setItem('role', userData.role);
-      }
-      if (userData.username) {
-        localStorage.setItem('username', userData.username);
-      }
+      // 3. Source de vérité Redux (pas de rôle figé via ancien localStorage)
+      dispatch(
+        loginSuccess({
+          token: userData.token,
+          username: userData.username,
+          role: resolveRole(userData),
+          user: {
+            username: userData.username || data.login,
+            role: resolveRole(userData) || null,
+          },
+        })
+      );
+
+      // Synchronisation stricte avec la réalité serveur
+      const profile = await authService.me();
+      const resolvedRole = resolveRole(profile);
+      dispatch(
+        syncProfileSuccess({
+          username: profile.login || profile.username,
+          role: resolvedRole,
+          user: {
+            id: profile.id,
+            nom: profile.nom,
+            prenom: profile.prenom,
+            email: profile.email,
+            username: profile.login || profile.username,
+            role: resolvedRole,
+          },
+        })
+      );
 
       // 5. Redirection
       navigate('/dashboard');
-
-      // Optionnel : recharge la page pour forcer la Sidebar à lire le nouveau rôle
-      window.location.reload();
     } catch (err) {
-      alert("Erreur d'authentification : Identifiants incorrects");
+      setInfoModal({ open: true, title: 'Authentification', message: "Erreur d'authentification : Identifiants incorrects." });
       console.error(err);
     }
   };
@@ -74,6 +109,16 @@ export default function Login() {
           </button>
         </form>
       </div>
+
+      <Modal
+        isOpen={infoModal.open}
+        onClose={() => setInfoModal({ ...infoModal, open: false })}
+        title={infoModal.title}
+        hideCancel
+        confirmLabel="OK"
+      >
+        <p>{infoModal.message}</p>
+      </Modal>
     </div>
   );
 }

@@ -39,9 +39,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -54,33 +56,63 @@ public class ReportingController {
     private ReportingService reportingService;
 
     @GetMapping("/phases/terminees-non-facturees")
-    public ResponseEntity<List<Phase>> getTermineesNonFacturees() {
-        return ResponseEntity.ok(reportingService.getTermineesNonFacturees());
+    public ResponseEntity<List<Phase>> getTermineesNonFacturees(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getTermineesNonFacturees(dateDebut, dateFin, projetId, chefId));
     }
 
     @GetMapping("/phases/facturees-non-payees")
-    public ResponseEntity<List<Phase>> getFactureesNonPayees() {
-        return ResponseEntity.ok(reportingService.getFactureesNonPayees());
+    public ResponseEntity<List<Phase>> getFactureesNonPayees(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getFactureesNonPayees(dateDebut, dateFin, projetId, chefId));
     }
 
     @GetMapping("/phases/payees")
-    public ResponseEntity<List<Phase>> getPayees() {
-        return ResponseEntity.ok(reportingService.getPayees());
+    public ResponseEntity<List<Phase>> getPayees(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getPayees(dateDebut, dateFin, projetId, chefId));
     }
 
     @GetMapping("/tableau-de-bord")
-    public ResponseEntity<Map<String, Object>> getStats() {
-        return ResponseEntity.ok(reportingService.getTableauDeBord());
+    public ResponseEntity<Map<String, Object>> getStats(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getTableauDeBord(dateDebut, dateFin, projetId, chefId));
     }
 
     @GetMapping("/projets/en-cours")
-    public ResponseEntity<List<Projet>> getEnCours() {
-        return ResponseEntity.ok(reportingService.getProjetsEnCours());
+    public ResponseEntity<List<Projet>> getEnCours(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getProjetsEnCours(dateDebut, dateFin, projetId, chefId));
     }
 
     @GetMapping("/projets/clotures")
-    public ResponseEntity<List<Projet>> getClotures() {
-        return ResponseEntity.ok(reportingService.getProjetsClotures());
+    public ResponseEntity<List<Projet>> getClotures(
+            @RequestParam(required = false) LocalDate dateDebut,
+            @RequestParam(required = false) LocalDate dateFin,
+            @RequestParam(required = false) Long projetId,
+            @RequestParam(required = false) Long chefId
+    ) {
+        return ResponseEntity.ok(reportingService.getProjetsClotures(dateDebut, dateFin, projetId, chefId));
     }
 }
 
