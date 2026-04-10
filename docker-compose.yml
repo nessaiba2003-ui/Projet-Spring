@@ -1,4 +1,18 @@
 services:
+  app-springboot:
+    build: .
+    container_name: spring-boot-app
+    ports:
+      - "8080:9090"
+    environment:
+      # Connexion à XAMPP
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/suivi_prj_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
