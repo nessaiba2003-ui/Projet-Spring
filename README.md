@@ -1,3 +1,5 @@
+
+https://github.com/user-attachments/assets/c86ecec7-add2-4099-9eee-e3e6602d8a2a
 # 🚀 Système de Gestion de Suivi de Projets (SGSP)
 
 > **Projet Académique - Module Développement Framework Spring Boot - JEE**  
@@ -112,10 +114,10 @@ Nous avons mis en place une stack de monitoring complète pour assurer la haute 
 
 
 ---
-## 📸 Démonstration Technique
+## 📸 Outils Techniques
 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
-Démonstration de la structure du projet sous Java 21 avec Maven.
+La structure du projet sous Java 21 avec Maven.
 <p align="center">
   <br><em>Packages organisés, configuration du pom.xml et classe Main.</em>
 </p>
@@ -153,7 +155,11 @@ https://github.com/user-attachments/assets/b6335b4b-320e-4d97-b7ba-c73b4948763d
 #### ROLE COMPATBLE ET DIRECTEUR
 
 
-https://github.com/user-attachments/assets/9d67c3fd-f3e6-400e-9494-9861773b7393
+
+
+https://github.com/user-attachments/assets/de2dbef3-0d7e-4086-bcbe-b35eba31b980
+
+
 
 ---
 
