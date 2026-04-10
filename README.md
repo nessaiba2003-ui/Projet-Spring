@@ -1,5 +1,3 @@
-
-https://github.com/user-attachments/assets/9a37aa12-e9b7-49d4-a0f4-1b3e2e922e27
 # 🚀 Système de Gestion de Suivi de Projets (SGSP)
 
 > **Projet Académique - Module Développement Framework Spring Boot - JEE**  
