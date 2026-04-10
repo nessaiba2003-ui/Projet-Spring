@@ -55,8 +55,8 @@ export default function LivrableList() {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">{phaseId ? 'Livrables de la Phase' : 'Tous les livrables'}</h1>
-        {canManage && phaseId && (
-          <Link to={`/phases/${phaseId}/livrables/nouveau`} className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-sm shadow-lg shadow-blue-200">
+        {canManage && (
+          <Link to={phaseId ? `/phases/${phaseId}/livrables/nouveau` : '/livrables/nouveau'} className="bg-blue-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-bold text-sm shadow-lg shadow-blue-200">
             <Plus size={18}/> Nouveau Livrable
           </Link>
         )}

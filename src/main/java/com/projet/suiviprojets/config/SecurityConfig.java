@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import com.projet.suiviprojets.security.JwtAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -30,7 +31,13 @@ public class SecurityConfig {
                         // Accès public (Login, Swagger et Erreurs)
                         .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
 
-                        // Seul l'ADMINISTRATEUR peut gérer les employés et profils
+                        // Employés:
+                        // - lecture autorisée pour alimenter les sélecteurs projet (chef de projet)
+                        // - écriture réservée à l'administrateur
+                        .requestMatchers(HttpMethod.GET, "/api/employes/**").hasAnyAuthority(
+                                "ROLE_ADMINISTRATEUR",
+                                "ROLE_SECRETAIRE",
+                                "ROLE_CHEF_DE_PROJET")
                         .requestMatchers("/api/employes/**", "/api/profils/**").hasAnyAuthority("ROLE_ADMINISTRATEUR")
 
                         // Dashboard global : lisible par tous les profils applicatifs
@@ -41,20 +48,25 @@ public class SecurityConfig {
                                 "ROLE_CHEF_DE_PROJET",
                                 "ROLE_COMPTABLE")
 
-                        // Projets: visibles aussi par le CHEF DE PROJET (sinon page vide côté frontend)
-                        // Organismes restent gérés par ADMIN + SECRETAIRE
+                        // Organismes:
+                        // - lecture autorisée au chef de projet (création/édition projet)
+                        // - écriture réservée à admin + secrétaire
+                        .requestMatchers(HttpMethod.GET, "/api/organismes/**").hasAnyAuthority(
+                                "ROLE_ADMINISTRATEUR",
+                                "ROLE_SECRETAIRE",
+                                "ROLE_CHEF_DE_PROJET")
                         .requestMatchers("/api/organismes/**").hasAnyAuthority("ROLE_ADMINISTRATEUR", "ROLE_SECRETAIRE")
                         .requestMatchers("/api/projets/**")
                         .hasAnyAuthority("ROLE_ADMINISTRATEUR", "ROLE_SECRETAIRE", "ROLE_CHEF_DE_PROJET")
 
-                        // Chef de Projet & Comptable pour les phases
-                        .requestMatchers("/api/phases/**")
-                        .hasAnyAuthority("ROLE_PROJET_MANAGER", "ROLE_CHEF_DE_PROJET", "ROLE_COMPTABLE",
+                        // Chef de Projet, Secrétaire & Comptable pour les phases
+                        .requestMatchers("/api/phases", "/api/phases/**")
+                        .hasAnyAuthority("ROLE_PROJET_MANAGER", "ROLE_CHEF_DE_PROJET", "ROLE_SECRETAIRE", "ROLE_COMPTABLE",
                                 "ROLE_ADMINISTRATEUR")
 
-                        // Le CHEF DE PROJET pour affectations et livrables
-                        .requestMatchers("/api/affectations/**", "/api/livrables/**")
-                        .hasAnyAuthority("ROLE_CHEF_DE_PROJET", "ROLE_PROJET_MANAGER", "ROLE_ADMINISTRATEUR")
+                        // Ressources projet: accessibles au secrétaire également
+                        .requestMatchers("/api/affectations", "/api/affectations/**", "/api/livrables", "/api/livrables/**")
+                        .hasAnyAuthority("ROLE_CHEF_DE_PROJET", "ROLE_PROJET_MANAGER", "ROLE_SECRETAIRE", "ROLE_ADMINISTRATEUR")
 
                         // Le COMPTABLE gère les factures
                         .requestMatchers("/api/factures/**").hasAnyAuthority("ROLE_COMPTABLE", "ROLE_ADMINISTRATEUR")

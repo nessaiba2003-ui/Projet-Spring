@@ -34,6 +34,12 @@ public class AffectationController {
         return ResponseEntity.ok(service.findByPhase(phaseId));
     }
 
+    @Operation(summary = "Lister toutes les affectations")
+    @GetMapping("/affectations")
+    public ResponseEntity<List<Affectation>> getAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
     @Operation(summary = "Retirer un employé d'une phase")
     @DeleteMapping("/phases/{phaseId}/employes/{employeId}")
     public ResponseEntity<Void> delete(@PathVariable Long phaseId, @PathVariable Long employeId) {

@@ -4,6 +4,7 @@ import { livrableSchema } from '../../utils/livrableSchema';
 import { useParams, useNavigate } from 'react-router-dom';
 import { livrableService } from '../../services/livrableService';
 import { phaseService } from '../../services/phaseService';
+import { projetService } from '../../services/projetService';
 import { Upload, ArrowLeft, FileCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -53,7 +54,21 @@ export default function LivrableForm() {
       });
     }
     // Charger les phases si route globale ou édition globale
-    if (!phaseId || id) phaseService.getAll().then((rows) => setPhases(rows || [])).catch(() => setPhases([]));
+    if (!phaseId || id) {
+      phaseService.getAll()
+        .then((rows) => {
+          const list = rows || [];
+          if (list.length > 0) {
+            setPhases(list);
+            return;
+          }
+          // Fallback robuste si /phases retourne vide: reconstruire via projets/{id}/phases
+          return projetService.getAll()
+            .then((projets) => Promise.all((projets || []).map((p) => phaseService.getByProjet(p.id).catch(() => []))))
+            .then((groups) => setPhases(groups.flat()));
+        })
+        .catch(() => setPhases([]));
+    }
   }, [id, reset, phaseId]);
 
   const onSubmit = async (data) => {

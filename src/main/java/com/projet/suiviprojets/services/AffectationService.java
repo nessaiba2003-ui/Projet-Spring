@@ -53,6 +53,7 @@ public class AffectationService {
     }
 
     public List<Affectation> findByPhase(Long phaseId) { return affectationRepository.findByPhaseId(phaseId); }
+    public List<Affectation> findAll() { return affectationRepository.findAll(); }
 
     public void delete(Long phaseId, Long employeId) {
         affectationRepository.deleteById(new AffectationId(employeId, phaseId));

@@ -120,8 +120,8 @@ function App() {
           <Route path=":id" element={<OrganismeDetail />} />
         </Route>
 
-        {/* PROTECTION : CHEF PROJET & ADMIN (Phases, Affectations, Livrables) */}
-        <Route element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.CHEF_PROJET]} />}>
+        {/* PROTECTION : CHEF PROJET, SECRETAIRE & ADMIN (Phases, Affectations, Livrables) */}
+        <Route element={<RoleRoute allowedRoles={[ROLES.ADMIN, ROLES.CHEF_PROJET, ROLES.SECRETAIRE]} />}>
           <Route path="projets/phases" element={<Navigate to="/phases" replace />} />
           <Route path="projets/affectations" element={<Navigate to="/affectations" replace />} />
           <Route path="projets/livrables" element={<Navigate to="/livrables" replace />} />
@@ -135,6 +135,7 @@ function App() {
           </Route>
           <Route path="affectations" element={<AffectationModule />} />
           <Route path="livrables" element={<LivrableList />} />
+          <Route path="livrables/nouveau" element={<LivrableForm />} />
           <Route path="livrables/edit/:id" element={<LivrableForm />} />
         </Route>
 

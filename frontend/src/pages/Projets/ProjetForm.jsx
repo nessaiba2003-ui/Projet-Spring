@@ -29,13 +29,50 @@ export default function ProjetForm() {
   const role = useSelector((state) => state.auth.role);
   const canManage = canMutateModule(role, 'projets');
 
+  const mergeUniqueEmployes = (...lists) => {
+    const map = new Map();
+    lists.flat().forEach((e) => {
+      if (e?.id != null && !map.has(String(e.id))) map.set(String(e.id), e);
+    });
+    return Array.from(map.values());
+  };
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(projetSchema)
   });
 
   useEffect(() => {
     organismeService.getAll().then(setOrganismes);
-    employeService.getAll().then(setEmployes);
+    employeService.getChefsProjet()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length > 0) {
+          setEmployes(rows);
+          return;
+        }
+        // Fallback 1: si endpoint vide, prendre tous les employés
+        return employeService.getAll()
+          .then((all) => setEmployes(all || []))
+          .catch(() => {
+            // Fallback 2: si /employes est indisponible pour ce rôle,
+            // extraire les chefs depuis les projets déjà existants
+            return projetService.getAll().then((projets) => {
+              const fromProjects = (projets || []).map((p) => p?.chefProjet).filter(Boolean);
+              setEmployes(mergeUniqueEmployes(fromProjects));
+            });
+          });
+      })
+      .catch(() => {
+        employeService.getAll()
+          .then((all) => setEmployes(all || []))
+          .catch(() => {
+            projetService.getAll()
+              .then((projets) => {
+                const fromProjects = (projets || []).map((p) => p?.chefProjet).filter(Boolean);
+                setEmployes(mergeUniqueEmployes(fromProjects));
+              })
+              .catch(() => setEmployes([]));
+          });
+      });
     if (id) {
       projetService.getById(id).then((project) => {
         reset({

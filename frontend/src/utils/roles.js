@@ -19,7 +19,7 @@ export const canAccessModule = (role, moduleKey) => {
   if (resolved === ROLES.ADMIN) return true;
 
   const byRole = {
-    [ROLES.SECRETAIRE]: ['dashboard', 'organismes', 'projets'],
+    [ROLES.SECRETAIRE]: ['dashboard', 'organismes', 'projets', 'phases', 'affectations', 'livrables', 'documents'],
     [ROLES.DIRECTEUR]: ['dashboard', 'reporting'],
     [ROLES.CHEF_PROJET]: ['dashboard', 'projets', 'phases', 'affectations', 'livrables', 'documents'],
     [ROLES.COMPTABLE]: ['dashboard', 'factures', 'paiement', 'reporting'],

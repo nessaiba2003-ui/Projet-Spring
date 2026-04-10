@@ -35,6 +35,12 @@ public class EmployeController {
         return ResponseEntity.ok(employeService.findAll());
     }
 
+    @GetMapping("/chefs-projet")
+    @Operation(summary = "Lister les employés avec profil Chef de projet")
+    public ResponseEntity<List<Employe>> getChefsProjet() {
+        return ResponseEntity.ok(employeService.findChefsDeProjet());
+    }
+
     @GetMapping("/disponibles")
     @Operation(summary = "Recherche de disponibilité")
     public ResponseEntity<List<Employe>> getDisponibles(

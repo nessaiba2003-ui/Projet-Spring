@@ -1,7 +1,7 @@
 import api from './api/axiosConfig';
 
 export const affectationService = {
-  getAll: () => Promise.resolve([]),
+  getAll: () => api.get('/affectations'),
   // 1. Liste des employés affectés à une phase
   getByPhase: (phaseId) => api.get(`/phases/${phaseId}/employes`),
 

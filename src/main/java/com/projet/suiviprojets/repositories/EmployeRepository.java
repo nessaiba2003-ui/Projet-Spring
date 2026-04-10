@@ -26,6 +26,11 @@ public interface EmployeRepository extends JpaRepository<Employe, Long> {
             "SELECT a.employe.id FROM Affectation a WHERE " +
             "(:debut <= a.dateFin AND :fin >= a.dateDebut))")
     List<Employe> findAvailableEmployes(@Param("debut") LocalDate debut, @Param("fin") LocalDate fin);
+
+    // Liste des employés qui ont un profil "chef de projet"
+    @Query("SELECT e FROM Employe e JOIN e.profil p " +
+            "WHERE UPPER(p.libelle) LIKE '%CHEF%' AND UPPER(p.libelle) LIKE '%PROJET%'")
+    List<Employe> findChefsDeProjet();
 }
 
 

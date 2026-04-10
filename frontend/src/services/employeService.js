@@ -2,6 +2,7 @@ import api from './api/axiosConfig';
 
 export const employeService = {
   getAll: () => api.get('/employes'),
+  getChefsProjet: () => api.get('/employes/chefs-projet'),
   getById: (id) => api.get(`/employes/${id}`),
   create: (data) => api.post('/employes/save', data),
   update: (id, data) => api.put(`/employes/${id}`, data),

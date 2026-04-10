@@ -21,6 +21,7 @@ export default function AffectationModule() {
   const [saveError, setSaveError] = useState('');
   const role = useSelector((state) => state.auth.role);
   const canManage = canMutateModule(role, 'affectations');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (phaseId) loadAffectations();
@@ -42,22 +43,20 @@ export default function AffectationModule() {
           setAffectations([]);
         });
     } else {
+      // Vue globale: afficher réellement toutes les affectations
+      setLoading(true);
+      affectationService.getAll()
+        .then((rows) => setAffectations(rows || []))
+        .catch(() => setAffectations([]))
+        .finally(() => setLoading(false));
       projetService.getAll()
         .then((projets) => Promise.all((projets || []).map((p) => phaseService.getByProjet(p.id).catch(() => []))))
         .then((phaseGroups) => {
           const allPhases = phaseGroups.flat();
           setProjectPhases(allPhases);
-          if (allPhases.length > 0) {
-            const first = String(allPhases[0].id);
-            setSelectedPhaseId(first);
-            return affectationService.getByPhase(first).then((rows) => setAffectations(rows || []));
-          }
-          setAffectations([]);
-          return null;
         })
         .catch(() => {
           setProjectPhases([]);
-          setAffectations([]);
         });
     }
 
@@ -69,9 +68,15 @@ export default function AffectationModule() {
 
   useEffect(() => {
     if (!phaseId && selectedPhaseId) {
-      affectationService.getByPhase(selectedPhaseId).then((rows) => setAffectations(rows || [])).catch(() => setAffectations([]));
+      setLoading(true);
+      affectationService.getByPhase(selectedPhaseId)
+        .then((rows) => setAffectations(rows || []))
+        .catch(() => setAffectations([]))
+        .finally(() => setLoading(false));
     }
-  }, [selectedPhaseId, phaseId]);
+  }, [selectedPhaseId, phaseId, projetId]);
+
+  const displayedAffectations = affectations;
 
   const loadAffectations = () => {
     affectationService.getByPhase(phaseId).then(data => setAffectations(data || [])).catch(error => {
@@ -248,7 +253,7 @@ export default function AffectationModule() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {affectations.map((aff) => {
+            {displayedAffectations.map((aff) => {
               const employeId = aff?.id?.employeId || aff?.employeId;
               const phaseRef = aff?.id?.phaseId || phaseId || selectedPhaseId;
               const e = employes.find(emp => String(emp.id) === String(employeId)) || aff.employe;
@@ -274,6 +279,13 @@ export default function AffectationModule() {
               </tr>
               );
             })}
+            {!loading && displayedAffectations.length === 0 && (
+              <tr>
+                <td colSpan={3} className="p-6 text-center text-slate-400 text-sm italic">
+                  Aucune affectation trouvée pour ce filtre.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

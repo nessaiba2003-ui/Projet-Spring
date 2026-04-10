@@ -29,12 +29,7 @@ public class PhaseService {
             throw new ProjectBusinessException("Les dates de la phase sortent de l'intervalle du projet !");
         }
 
-        // RÈGLE 2 : Somme des montants ne dépasse pas le montant global
-        Double totalActuel = phaseRepository.sumMontantsByProjetId(projetId);
-        if (totalActuel == null) totalActuel = 0.0;
-        if (totalActuel + phase.getMontant() > projet.getMontantGlobal()) {
-            throw new  ProjectBusinessException("Le montant total des phases dépasse le budget du projet !");
-        }
+        // Contrôle budget désactivé à la demande métier (ne pas bloquer la saisie).
 
         phase.setProjet(projet);
         // Initialisation des états à false par défaut
@@ -68,12 +63,7 @@ public class PhaseService {
             throw new ProjectBusinessException("Les dates de la phase sortent de l'intervalle du projet !");
         }
 
-        Double totalActuel = phaseRepository.sumMontantsByProjetId(projet.getId());
-        if (totalActuel == null) totalActuel = 0.0;
-        double totalSansPhaseCourante = totalActuel - (existing.getMontant() != null ? existing.getMontant() : 0.0);
-        if (totalSansPhaseCourante + incoming.getMontant() > projet.getMontantGlobal()) {
-            throw new ProjectBusinessException("Le montant total des phases dépasse le budget du projet !");
-        }
+        // Contrôle budget désactivé à la demande métier (ne pas bloquer la saisie).
 
         existing.setLibelle(incoming.getLibelle());
         existing.setMontant(incoming.getMontant());

@@ -36,6 +36,7 @@ public class EmployeService {
     }
 
     public List<Employe> findAll() { return employeRepository.findAll(); }
+    public List<Employe> findChefsDeProjet() { return employeRepository.findChefsDeProjet(); }
 
     public List<Employe> findDisponibles(LocalDate debut, LocalDate fin) {
         return employeRepository.findAvailableEmployes(debut, fin);
