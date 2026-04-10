@@ -141,18 +141,26 @@ Preuve du fonctionnement des filtres de sécurité.
 ---
 ## 📸 VIDEO Démonstration 
 
-ROLE ADMINISTRATOR
+#### ROLE ADMINISTRATOR
 
 
 https://github.com/user-attachments/assets/b6335b4b-320e-4d97-b7ba-c73b4948763d
 
 
 
+---
 
-ROLE COMPATBLE ET DIRECTEUR
+#### ROLE COMPATBLE ET DIRECTEUR
 
 
 https://github.com/user-attachments/assets/9d67c3fd-f3e6-400e-9494-9861773b7393
+
+---
+
+#### ROLE SECRETAIRE ET CHEF DE PROJET
+ 
+
+
 
 
 
