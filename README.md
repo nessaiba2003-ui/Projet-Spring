@@ -138,8 +138,27 @@ Preuve du fonctionnement des filtres de sécurité.
   <br><em>Capture montrant le blocage d'une requête sans Token Bearer.</em>
 </p>
 
+---
+## 📸 VIDEO Démonstration 
+
+ROLE ADMINISTRATOR
 
 
+https://github.com/user-attachments/assets/b6335b4b-320e-4d97-b7ba-c73b4948763d
+
+
+
+
+ROLE COMPATBLE ET DIRECTEUR
+
+
+https://github.com/user-attachments/assets/9d67c3fd-f3e6-400e-9494-9861773b7393
+
+
+
+
+
+---
 ## 📑 Documentation de l'API (Endpoints principaux)
 Voici un aperçu des points d'entrée développés et testés sous Postman :
 
