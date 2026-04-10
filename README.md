@@ -115,28 +115,28 @@ Nous avons mis en place une stack de monitoring complète pour assurer la haute 
 ## 📸 Outils Techniques
 
 ### 🛠️ 1. Initialisation & Configuration (IntelliJ IDEA)
-La structure du projet sous Java 21 avec Maven.
-<p align="center">
-  <br><em>Packages organisés, configuration du pom.xml et classe Main.</em>
-</p>
+La structure du projet sous Java 21 avec Maven.    
 
 ### 📄 2. Documentation Interactive avec Swagger
-Le projet expose une documentation vivante accessible via OpenAPI.
-<p align="center">
-  <br><em>Liste complète des endpoints et modèles de données testables en direct.</em>
-</p>
+Le projet expose une documentation vivante accessible via OpenAPI.  
+Liste complète des endpoints et modèles de données testables en direct   
+
+<img width="1919" height="999" alt="Capture d&#39;écran 2026-04-10 131901" src="https://github.com/user-attachments/assets/d20bf8d2-0640-4138-9b40-78feb385e2b3" />
+
 
 ### 🧪 3. Tests des API REST (Postman)
-Validation des flux de données et des réponses JSON.
-<p align="center">
-  <br><em>Test réussi : Création d'une phase de projet avec retour 201 Created.</em>
-</p>
+Validation des flux de données et des réponses JSON.    
+Test réussi : Création d'une phase de projet avec retour 201 Created.   
+
+<img width="954" height="830" alt="Capture d&#39;écran 2026-03-15 125627" src="https://github.com/user-attachments/assets/33203a3f-ac29-4c6b-ab56-be8063db2ae6" />
+
 
 ### 🛡️ 4. Validation de la Sécurité JWT
 Preuve du fonctionnement des filtres de sécurité.
-<p align="center">
-  <br><em>Capture montrant le blocage d'une requête sans Token Bearer.</em>
-</p>
+Capture montrant le blocage d'une requête sans Token Bearer.
+
+<img width="958" height="920" alt="Capture d&#39;écran 2026-03-15 140008" src="https://github.com/user-attachments/assets/fbba24e0-7c35-4fde-b8f9-e81af5df65b4" />
+
 
 ---
 ## 📸 VIDEO Démonstration 
