@@ -200,7 +200,7 @@ Voici un aperçu des points d'entrée développés et testés sous Postman :
 | `GET` | `/api/reporting/tableau-de-bord` | Métriques globales KPIs | Directeur+ |
 | `GET` | `/api/documents/{id}/download` | Téléchargement sécurisé | Rôle autorisé |
 
-📚 **Documentation Interactive** : `http://localhost:9090/swagger-ui/index.html`
+📚 **Documentation Interactive** : `http://localhost:8080/swagger-ui/index.html`
 
 ---
 
