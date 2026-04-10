@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(title = "API Suivi de Projets", version = "1.0", description = "Documentation des APIs sécurisées par JWT"),
-        security = @SecurityRequirement(name = "bearerAuth") // 👈 Lie la sécurité aux APIs
+        security = @SecurityRequirement(name = "bearerAuth") 
 )
 @SecurityScheme(
         name = "bearerAuth",
