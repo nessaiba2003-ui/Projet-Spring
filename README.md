@@ -144,8 +144,10 @@ Capture montrant le blocage d'une requête sans Token Bearer.
 #### ROLE ADMINISTRATOR
 
 
-https://github.com/user-attachments/assets/b6335b4b-320e-4d97-b7ba-c73b4948763d
 
+
+
+https://github.com/user-attachments/assets/fe2a6824-8679-408e-8c77-655cfde43a6b
 
 
 ---
