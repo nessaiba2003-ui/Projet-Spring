@@ -162,9 +162,7 @@ https://github.com/user-attachments/assets/de2dbef3-0d7e-4086-bcbe-b35eba31b980
 ---
 
 #### ROLE SECRETAIRE ET CHEF DE PROJET
- 
 
-https://github.com/user-attachments/assets/15bff8fa-8f2e-44c5-9d8e-7dafed4b60e3
 
 
 
