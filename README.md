@@ -144,17 +144,13 @@ Capture montrant le blocage d'une requête sans Token Bearer.
 #### ROLE ADMINISTRATOR
 
 
-
-
-
 https://github.com/user-attachments/assets/fe2a6824-8679-408e-8c77-655cfde43a6b
 
 
 ---
 
+
 #### ROLE COMPATBLE ET DIRECTEUR
-
-
 
 
 https://github.com/user-attachments/assets/de2dbef3-0d7e-4086-bcbe-b35eba31b980
@@ -166,11 +162,13 @@ https://github.com/user-attachments/assets/de2dbef3-0d7e-4086-bcbe-b35eba31b980
 #### ROLE SECRETAIRE ET CHEF DE PROJET
 
 
+
 https://github.com/user-attachments/assets/5883067d-c796-44c8-9cc8-2f710a29d784
 
 
 
 ---
+
 ## 📑 Documentation de l'API (Endpoints principaux)
 Voici un aperçu des points d'entrée développés et testés sous Postman :
 
@@ -224,11 +222,12 @@ Le projet respecte rigoureusement les diagrammes UML élaborés en amont (Packag
 
 ---
 
-🔍 Filtres Disponibles
-🗓️ Période personnalisée (date début/fin)
-🏢 Organisme / Chef de projet
-📊 État : En cours / Terminé / Facturé / Payé
-👥 Employé affecté
+## 🔍 Filtres Disponibles  
+
+🗓️ Période personnalisée (date début/fin)  
+🏢 Organisme / Chef de projet  
+📊 État : En cours / Terminé / Facturé / Payé  
+👥 Employé affecté  
 
 ---
 
